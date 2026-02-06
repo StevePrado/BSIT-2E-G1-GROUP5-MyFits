@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Fits - About</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /*THEME STYLES*/
+        body { 
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff; 
+            overflow-x: hidden; 
+        }
+        
+        /*STANDARD NAVBAR STYLES*/
+        .navbar-brand { font-weight: 900; font-size: 1.5rem; letter-spacing: -1px; }
+        .nav-link { 
+            color: #000 !important; 
+            font-weight: 500; 
+            margin: 0 10px; 
+            transition: color 0.3s ease; 
+        }
+        .nav-link:hover { color: #555 !important; }
+
+        .btn-black { 
+            background-color: #000; color: #fff; border-radius: 0; 
+            padding: 8px 25px; font-weight: 600; border: 2px solid #000;
+        }
+        .btn-black:hover { background-color: #333; border-color: #333; color: #fff; }
+
+        /*ABOUT PAGE SPECIFIC STYLES*/
+    
+        .bg-light-gray { background-color: #f2f2f2; }
+        
+       
+        .split-section { min-height: 500px; display: flex; }
+
+        
+        .image-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: hidden;
+        }
+        .bw-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            max-height: 350px; 
+            filter: grayscale(100%); /* Makes images Black & White */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+
+        .vertical-text-wrapper {
+            width: 80px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; 
+        }
+        .vertical-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-size: 4rem; 
+            font-weight: 900;
+            white-space: nowrap;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        /*Borders for the grid look*/
+        .border-grid-top { border-bottom: 1px solid #000; }
+        .border-grid-mid { border-right: 1px solid #000; }
+
+        /*STANDARD FOOTER STYLES*/
+        footer { background-color: #000; color: #fff; padding: 60px 0; }
+        .footer-input { border-radius: 0; border: none; padding: 12px; width: 100%; }
+        
+        .footer-link {
+            text-decoration: none;
+            color: #999;
+            margin-bottom: 12px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .footer-link:hover {
+            color: #ffffff;
+            padding-left: 5px; 
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">MY FiTS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Closet</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bold" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contacts</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <a href="gallery.html" class="text-decoration-none text-dark fw-bold me-3">Log In</a>
+                    <a href="gallery.html" class="btn btn-black">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-0" style="margin-top: 88px;"> 
+        
+        <div class="row g-0 border-grid-top">
+            
+            <div class="col-lg-6 bg-white d-flex align-items-center p-5 border-grid-mid">
+                <div class="ps-lg-5 pe-lg-4">
+                    <h1 class="fw-bold mb-3 display-5">The Problem</h1>
+                    <h3 class="fw-light text-secondary fst-italic mb-4">“I have nothing to wear.”</h3>
+                    <p class="lead fs-6 lh-lg">
+                        We’ve all had that moment where we stare at a full closet and can't decide what to wear. The problem isn't a lack of clothes; it's a lack of organization. We often forget what we own because it’s buried in drawers, making it hard to mix and match outfits efficiently.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 bg-light-gray d-flex split-section">
+                <div class="vertical-text-wrapper">
+                    <h1 class="vertical-text text-black">MY FITS</h1>
+                </div>
+                <div class="image-wrapper">
+                    <img src="https://anyiko.files.wordpress.com/2012/09/dirty-closet.jpeg?w=300&h=199&crop=1" class="bw-image" alt="Messy Closet">
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-0">
+            
+            <div class="col-lg-6 bg-black d-flex split-section border-grid-mid">
+                <div class="image-wrapper">
+                    <img src="https://images.stockcake.com/public/3/7/3/373902c7-b37f-41cc-a2d0-cdffef1a643d/luxurious-closet-design-stockcake.jpg" class="bw-image" alt="Clean Closet">
+                </div>
+                <div class="vertical-text-wrapper">
+                    <h1 class="vertical-text text-white">MY FITS</h1>
+                </div>
+            </div>
+
+            <div class="col-lg-6 bg-white d-flex align-items-center p-5">
+                <div class="ps-lg-5 pe-lg-4">
+                    <h1 class="fw-bold mb-3 display-5">The Solution</h1>
+                    <h3 class="fw-light text-secondary mb-4">Your "Digital Twin"</h3>
+                    <p class="lead fs-6 lh-lg">
+                        My Fits is a web-based application that acts as a "Digital Twin" of your closet. It helps users organize their wardrobe, plan outfits, and save time getting ready in the morning—all from their browser.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="bg-black text-white py-5">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-md-4 mb-4">
+                    <h4 class="fw-bold mb-3">MY FiTS</h4>
+                    <p class="small text-secondary mb-4">Your Digital Closet Twin.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h6 class="fw-bold mb-4 text-uppercase">Subscribe to our Newsletter</h6>
+                    <div class="input-group">
+                        <input type="email" class="footer-input" placeholder="Enter Email...">
+                    </div>
+                </div>
+
+                <div class="col-md-4 ps-lg-5">
+                    <h6 class="fw-bold mb-4 text-uppercase">Quick Links</h6>
+                    <div class="d-flex flex-column">
+                        <a href="index.html" class="footer-link">Home</a>
+                        <a href="gallery.html" class="footer-link">Closet</a>
+                        <a href="services.html" class="footer-link">Services</a>
+                        <a href="about.html" class="footer-link">About</a>
+                        <a href="contact.html" class="footer-link">Contacts</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-5 pt-3 text-secondary small">
+                &copy; 2026 My Fits Project. BSIT-2E.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
