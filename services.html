@@ -92,30 +92,27 @@
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
+ <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="index.html">MY FiTS</a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item"><a class="nav-link fw-semibold" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link fw-semibold" href="gallery.html">Closet</a></li>
-          <li class="nav-item"><a class="nav-link fw-semibold" href="services.html">Services</a></li>
-          <li class="nav-item"><a class="nav-link fw-semibold" href="about.html">About</a></li>
-          <li class="nav-item"><a class="nav-link fw-semibold" href="contact.html">Contacts</a></li>
-        </ul>
-
-        <div class="d-flex align-items-center">
-          <a href="gallery.html" class="text-decoration-none text-dark fw-bold me-3">Log In</a>
-          <a href="gallery.html" class="btn btn-dark px-4">Sign Up</a>
+        <a class="navbar-brand" href="index.html">MY FiTS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="gallery.html">Closet</a></li>
+                <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.html">Contacts</a></li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <a href="gallery.html" class="text-decoration-none text-dark fw-bold me-3">Log In</a>
+                <a href="gallery.html" class="btn btn-black">Sign Up</a>
+            </div>
         </div>
-      </div>
     </div>
-  </nav>
+</nav>
 
 
   <!-- Heading -->
@@ -205,41 +202,44 @@
 
 
   <!-- Footer -->
-  <footer>
+ <footer class="bg-black text-white py-5">
     <div class="container">
-      <div class="row">
+        <div class="row">
+            
+            <div class="col-md-4 mb-4">
+                <h4 class="fw-bold mb-3">MY FiTS</h4>
+                <p class="small text-secondary mb-4">Your Digital Closet Twin.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
 
-        <div class="col-md-4 mb-4">
-          <h4 class="fw-bold mb-3">MY FiTS</h4>
-          <p class="small text-secondary mb-4">Your Digital Closet Twin.</p>
+            <div class="col-md-4 mb-4">
+                <h6 class="fw-bold mb-4 text-uppercase">Subscribe to our Newsletter</h6>
+                <div class="input-group">
+                    <input type="email" class="footer-input" placeholder="Enter Email...">
+                </div>
+            </div>
 
-          <div class="d-flex gap-3">
-            <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
-          </div>
+            <div class="col-md-4 ps-lg-5">
+                <h6 class="fw-bold mb-4 text-uppercase">Quick Links</h6>
+                <div class="d-flex flex-column">
+                    <a href="index.html" class="footer-link">Home</a>
+                    <a href="gallery.html" class="footer-link">Closet</a>
+                    <a href="services.html" class="footer-link">Services</a>
+                    <a href="about.html" class="footer-link">About</a>
+                    <a href="contact.html" class="footer-link">Contacts</a>
+                </div>
+            </div>
+
         </div>
 
-        <div class="col-md-4 mb-4">
-          <h6 class="fw-bold mb-4 text-uppercase">Subscribe to our Newsletter</h6>
-          <input type="email" class="footer-input" placeholder="Enter Email...">
+        <div class="text-center mt-5 pt-3 text-secondary small">
+            &copy; 2026 My Fits Project. BSIT-2E.
         </div>
-
-        <div class="col-md-4">
-          <h6 class="fw-bold mb-4 text-uppercase">Quick Links</h6>
-          <a href="index.html" class="footer-link">Home</a>
-          <a href="gallery.html" class="footer-link">Closet</a>
-          <a href="services.html" class="footer-link">Services</a>
-          <a href="about.html" class="footer-link">About</a>
-          <a href="contact.html" class="footer-link">Contacts</a>
-        </div>
-
-      </div>
-
-      <div class="text-center mt-5 pt-3 text-secondary small border-top border-secondary">
-        &copy; 2026 My Fits Project. BSIT-2E.
-      </div>
     </div>
-  </footer>
+</footer>
 
 
   <!-- Bootstrap JS -->
