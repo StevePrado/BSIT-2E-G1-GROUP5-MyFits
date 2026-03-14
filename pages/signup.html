@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Up</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<div class="navbar">
+<h2>MY FITS</h2>
+
+<div class="nav-links">
+<a href="#">Home</a>
+<a href="#">Closet</a>
+<a href="#">Services</a>
+<a href="#">About</a>
+<a href="#">Contacts</a>
+</div>
+
+<div class="auth">
+<a href="login.html">Log In</a>
+<a href="signup.html" class="signup-btn">Sign Up</a>
+</div>
+</div>
+
+<div class="container">
+
+<h1>Get Started.</h1>
+<p>Create your digital closet twin.</p>
+
+<form id="signupForm">
+
+<div class="row">
+<div class="form-group">
+<label>FIRST NAME</label>
+<input type="text" name="first_name">
+</div>
+
+<div class="form-group">
+<label>LAST NAME</label>
+<input type="text" name="last_name">
+</div>
+</div>
+
+<div class="form-group">
+<label>EMAIL ADDRESS</label>
+<input type="email" name="email">
+</div>
+
+<div class="row">
+<div class="form-group">
+<label>PASSWORD</label>
+<input type="password" name="password">
+</div>
+
+<div class="form-group">
+<label>CONFIRM PASSWORD</label>
+<input type="password" name="confirm_password">
+</div>
+</div>
+
+<button type="submit">Sign Up</button>
+
+</form>
+
+<p class="login-link">Already have an account? <a href="login.html">Log in here</a></p>
+
+</div>
+
+<footer>
+
+<div class="footer-container">
+
+<div class="footer-col">
+<h3>MY FITS</h3>
+<p>Your Digital Closet Twin.</p>
+</div>
+
+<div class="footer-col">
+<h4>SUBSCRIBE TO OUR NEWSLETTER</h4>
+<input type="text" placeholder="Enter Email...">
+</div>
+
+<div class="footer-col">
+<h4>QUICK LINKS</h4>
+<p>Home</p>
+<p>Closet</p>
+<p>Services</p>
+<p>About</p>
+<p>Contacts</p>
+</div>
+
+</div>
+
+<div class="footer-bottom">
+© 2026 My Fits Project. BSIT-2E
+</div>
+
+</footer>
+
+<script>
+
+document.getElementById("signupForm").addEventListener("submit",function(e){
+
+e.preventDefault()
+
+let formData = new FormData(this)
+
+fetch("signup.php",{
+method:"POST",
+body:formData
+})
+.then(res=>res.text())
+.then(data=>{
+alert(data)
+})
+
+})
+
+</script>
+
+</body>
+</html>

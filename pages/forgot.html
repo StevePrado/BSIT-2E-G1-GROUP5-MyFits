@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Forgot Password</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="navbar">
+<h2>MY FITS</h2>
+
+<div class="nav-links">
+<a href="#">Home</a>
+<a href="#">Closet</a>
+<a href="#">Services</a>
+<a href="#">About</a>
+<a href="#">Contacts</a>
+</div>
+
+<div class="auth">
+<a href="login.html">Log In</a>
+<a href="signup.html" class="signup-btn">Sign Up</a>
+</div>
+</div>
+
+<div class="container">
+
+<h1>Forgot Password</h1>
+<p>Enter your email to recover your password</p>
+
+<form id="forgotForm">
+
+<div class="form-group">
+<label>EMAIL ADDRESS</label>
+<input type="email" name="email" required>
+</div>
+
+<button type="submit">Recover Password</button>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("forgotForm").addEventListener("submit",function(e){
+
+e.preventDefault()
+
+let formData=new FormData(this)
+
+fetch("forgot.php",{
+method:"POST",
+body:formData
+})
+.then(res=>res.text())
+.then(data=>{
+alert(data)
+})
+
+})
+
+</script>
+
+</body>
+</html>

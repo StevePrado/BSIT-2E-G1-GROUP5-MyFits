@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY FITS - Creating</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #f3f4f6; --border: #eaeaea; --text-gray: #888; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- Navigation --- */
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; z-index: 1000; }
+        .nav-links { display: flex; gap: 30px; position: absolute; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: 500; }
+        .nav-links a { text-decoration: none; color: #000; }
+        .nav-links a.active { border-bottom: 2px solid #000; padding-bottom: 5px; }
+
+        /* --- Sidebar --- */
+        .sidebar { width: 220px; background: #fff; border-right: 1px solid var(--border); padding: 80px 20px 20px; flex-shrink: 0; }
+        .sidebar h3 { font-size: 18px; margin-bottom: 25px; }
+        .filter-group { margin-bottom: 25px; }
+        .filter-group h4 { font-size: 11px; text-transform: uppercase; color: var(--text-gray); margin-bottom: 12px; letter-spacing: 1px; }
+        .filter-opt { display: flex; align-items: center; gap: 10px; font-size: 13px; margin-bottom: 10px; cursor: pointer; }
+
+        /* --- Main Content --- */
+        .main-content { flex-grow: 1; padding: 80px 30px 30px; display: flex; gap: 30px; overflow-y: auto; }
+        
+        .catalogue-section { flex: 1; }
+        .search-bar { width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; margin-bottom: 20px; font-size: 14px; outline: none; }
+        
+        .cat-tabs { display: flex; gap: 12px; margin-bottom: 25px; }
+        .tab { padding: 8px 20px; border: 1px solid #ddd; border-radius: 20px; font-size: 12px; cursor: pointer; background: #fff; font-weight: 500; transition: 0.3s; }
+        .tab.active { background: #000; color: #fff; border-color: #000; }
+
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .item-card { background: #fff; border-radius: 15px; padding: 15px; text-align: center; border: 1px solid transparent; cursor: grab; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .item-card:hover { border-color: #ccc; transform: translateY(-2px); }
+        .item-img-placeholder { height: 110px; background: #f9f9f9; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .item-name { font-size: 12px; font-weight: 600; }
+
+        /* --- Canvas Section --- */
+        .canvas-section { width: 400px; flex-shrink: 0; }
+        .canvas-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+        
+        .drop-zone { width: 100%; height: 120px; border: 2px dashed #ddd; border-radius: 15px; background: #fff; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #bbb; transition: 0.3s; position: relative; }
+        .drop-zone.filled { border: 2px solid #000; color: #000; font-weight: 600; font-size: 15px; }
+
+        .random-btn { width: 100%; background: #fff; color: #000; border: 2px solid #000; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; margin: 10px 0 25px; transition: 0.2s; }
+        .random-btn:hover { background: #f0f0f0; }
+
+        /* --- Save Panel (Dark UI) --- */
+        .save-panel { background: #121212; color: #fff; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .panel-input { background: transparent; border: none; color: #fff; font-size: 22px; font-weight: 700; width: 100%; margin-bottom: 25px; outline: none; }
+        .panel-input::placeholder { color: #444; }
+
+        .info-row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #222; font-size: 14px; }
+        .info-label { display: flex; align-items: center; gap: 12px; color: #999; }
+        .info-value { color: #fff; cursor: pointer; font-weight: 500; }
+        .info-value::after { content: ' ›'; color: #444; margin-left: 5px; }
+
+        /* --- Schedule & Date functionality --- */
+        .schedule-container { position: relative; margin-top: 25px; }
+        .schedule-btn { width: 100%; background: #fff; color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: 600; font-size: 14px; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .date-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+        .save-outfit-btn { width: 100%; background: #fff; color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div style="font-weight: 900; font-size: 22px; letter-spacing: -1px;">MY FITS</div>
+        <nav class="nav-links">
+            <a href="#" class="active">My Closet</a>
+            <a href="#">Calendar</a>
+            <a href="#">Support</a>
+        </nav>
+        <div style="font-size: 13px; font-weight: 600;">👤 Hi, User</div>
+    </header>
+
+    <aside class="sidebar">
+        <h3>Filters</h3>
+        <div class="filter-group">
+            <h4>Status</h4>
+            <label class="filter-opt"><input type="checkbox" checked> Availability (15)</label>
+            <label class="filter-opt"><input type="checkbox"> In Laundry (5)</label>
+        </div>
+        <div class="filter-group">
+            <h4>Occasions</h4>
+            <label class="filter-opt"><input type="checkbox"> Work</label>
+            <label class="filter-opt"><input type="checkbox"> School</label>
+            <label class="filter-opt"><input type="checkbox" checked> Date</label>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <section class="catalogue-section">
+            <input type="text" class="search-bar" placeholder="Search your closet...">
+            <div class="cat-tabs">
+                <div class="tab active" onclick="switchTab('all', this)">All</div>
+                <div class="tab" onclick="switchTab('top', this)">Tops</div>
+                <div class="tab" onclick="switchTab('bottom', this)">Bottoms</div>
+                <div class="tab" onclick="switchTab('shoes', this)">Shoes</div>
+            </div>
+
+            <div class="item-grid" id="closet-grid">
+                <div class="item-card" draggable="true" ondragstart="drag(event)" data-type="top" data-color="Black">
+                    <div class="item-img-placeholder">👕</div>
+                    <div class="item-name">Black Sweatshirt</div>
+                </div>
+                <div class="item-card" draggable="true" ondragstart="drag(event)" data-type="top" data-color="White">
+                    <div class="item-img-placeholder">👔</div>
+                    <div class="item-name">White Polo</div>
+                </div>
+                <div class="item-card" draggable="true" ondragstart="drag(event)" data-type="bottom" data-color="Blue">
+                    <div class="item-img-placeholder">👖</div>
+                    <div class="item-name">Blue Denim</div>
+                </div>
+                <div class="item-card" draggable="true" ondragstart="drag(event)" data-type="bottom" data-color="Brown">
+                    <div class="item-img-placeholder">🩳</div>
+                    <div class="item-name">Brown Chinos</div>
+                </div>
+                <div class="item-card" draggable="true" ondragstart="drag(event)" data-type="shoes" data-color="White">
+                    <div class="item-img-placeholder">👟</div>
+                    <div class="item-name">White Sneakers</div>
+                </div>
+                <div class="item-card" draggable="true" ondragstart="drag(event)" data-type="shoes" data-color="Black">
+                    <div class="item-img-placeholder">👞</div>
+                    <div class="item-name">Black Boots</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="canvas-section">
+            <div class="canvas-title">Outfit Canvas</div>
+            
+            <div class="drop-zone" id="top-slot" ondrop="drop(event, 'top')" ondragover="allowDrop(event)">Drop Top Here</div>
+            <div class="drop-zone" id="bottom-slot" ondrop="drop(event, 'bottom')" ondragover="allowDrop(event)">Drop Bottom Here</div>
+            <div class="drop-zone" id="shoes-slot" ondrop="drop(event, 'shoes')" ondragover="allowDrop(event)">Drop Shoes Here</div>
+
+            <button class="random-btn" onclick="randomize()">Randomize Outfit (Next Next)</button>
+
+            <div class="save-panel">
+                <input type="text" class="panel-input" placeholder="add a name...">
+                
+                <div class="info-row">
+                    <div class="info-label">🏷️ Category</div>
+                    <div class="info-value" id="val-cat">None</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">✅ Status</div>
+                    <div class="info-value">Available</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">☕ Occasion</div>
+                    <div class="info-value">Date</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">🎨 Color</div>
+                    <div class="info-value" id="val-color">None</div>
+                </div>
+
+                <div class="schedule-container">
+                    <button class="schedule-btn">
+                        <span>Schedule outfit</span>
+                        <span id="date-display">📅</span>
+                    </button>
+                    <input type="date" class="date-input-hidden" onchange="updateDate(this.value)">
+                </div>
+
+                <button class="save-outfit-btn" onclick="saveFit()">
+                    SAVE OUTFIT ☁️
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Tab Filtering
+        function switchTab(type, el) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.querySelectorAll('.item-card').forEach(card => {
+                card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
+            });
+        }
+
+        // Drag and Drop Logic
+        function allowDrop(ev) { ev.preventDefault(); }
+        
+        function drag(ev) {
+            ev.dataTransfer.setData("name", ev.target.querySelector('.item-name').innerText);
+            ev.dataTransfer.setData("type", ev.target.dataset.type);
+            ev.dataTransfer.setData("color", ev.target.dataset.color);
+        }
+
+        function drop(ev, slotType) {
+            ev.preventDefault();
+            const name = ev.dataTransfer.getData("name");
+            const type = ev.dataTransfer.getData("type");
+            const color = ev.dataTransfer.getData("color");
+
+            if (type === slotType) {
+                const slot = document.getElementById(`${slotType}-slot`);
+                slot.innerText = name;
+                slot.classList.add('filled');
+                
+                // Update Panel labels
+                document.getElementById('val-cat').innerText = name;
+                document.getElementById('val-color').innerText = color;
+            } else {
+                alert(`Wrong slot! Please drop a ${slotType} item here.`);
+            }
+        }
+
+        // Randomizer Logic
+        function randomize() {
+            const types = ['top', 'bottom', 'shoes'];
+            types.forEach(t => {
+                const items = Array.from(document.querySelectorAll(`.item-card[data-type="${t}"]`));
+                if (items.length > 0) {
+                    const picked = items[Math.floor(Math.random() * items.length)];
+                    const slot = document.getElementById(`${t}-slot`);
+                    slot.innerText = picked.querySelector('.item-name').innerText;
+                    slot.classList.add('filled');
+                }
+            });
+        }
+
+        // Date Picker Update
+        function updateDate(val) {
+            if(val) {
+                const date = new Date(val);
+                const options = { month: 'short', day: 'numeric' };
+                document.getElementById('date-display').innerText = date.toLocaleDateString('en-US', options);
+            }
+        }
+
+        function saveFit() {
+            const name = document.querySelector('.panel-input').value;
+            if(!name) {
+                alert("Please add a name for your fit!");
+            } else {
+                alert(`Outfit "${name}" saved to your calendar!`);
+            }
+        }
+    </script>
+</body>
+</html>
