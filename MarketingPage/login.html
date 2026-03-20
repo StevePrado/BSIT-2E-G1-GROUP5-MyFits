@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY FiTS - Log In</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        
+        body { font-family: 'Poppins', sans-serif; background-color: #fff; overflow-x: hidden; padding-top: 80px; display: flex; flex-direction: column; min-height: 100vh;}
+        
+        
+        .navbar-brand { font-weight: 900; font-size: 1.5rem; letter-spacing: -1px; }
+        .nav-link { color: #000 !important; font-weight: 500; margin: 0 10px; transition: color 0.3s ease; }
+        .nav-link:hover { color: #555 !important; }
+        .btn-black { background-color: #000; color: #fff; border-radius: 0; padding: 8px 25px; font-weight: 600; border: 2px solid #000; transition: 0.3s; }
+        .btn-black:hover { background-color: #333; border-color: #333; color: #fff; }
+
+        
+        .auth-section { flex: 1; display: flex; align-items: center; justify-content: center; padding: 120px 20px 180px 20px; }
+        .auth-wrapper { width: 100%; max-width: 420px; } 
+        
+        .auth-title { font-weight: 900; font-size: 3rem; letter-spacing: -1.5px; margin-bottom: 5px; color: #222;}
+        .auth-subtitle { color: #777; font-size: 1.1rem; margin-bottom: 40px; font-weight: 400; }
+
+        .form-label-custom { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; color: #000; }
+        .form-control-custom { border-radius: 0px; border: 1px solid #ddd; padding: 12px 15px; font-size: 0.95rem; color: #555;}
+        .form-control-custom:focus { border-color: #000; box-shadow: none; }
+        .form-control-custom::placeholder { color: #aaa; font-weight: 400; }
+
+        .btn-auth { background-color: #000; color: #fff; width: 100%; padding: 14px; font-weight: 700; font-size: 1.1rem; border: none; border-radius: 0; margin-top: 10px; transition: 0.3s;}
+        .btn-auth:hover { background-color: #333; }
+
+        .form-check-label { font-size: 0.9rem; font-weight: 600; color: #333;}
+        .form-check-input:checked { background-color: #000; border-color: #000; }
+        
+        .text-black-link { color: #000; font-weight: 700; text-decoration: none; transition: 0.2s; font-size: 0.9rem;}
+        .text-black-link:hover { text-decoration: underline; }
+
+        
+        footer { background-color: #000; color: #fff; padding: 60px 0; margin-top: auto;}
+        .footer-input { border-radius: 0; border: none; padding: 12px; width: 100%; outline: none;}
+        .footer-link { text-decoration: none; color: #999; margin-bottom: 12px; display: inline-block; transition: all 0.3s ease; font-size: 0.9rem; }
+        .footer-link:hover { color: #ffffff; padding-left: 5px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">MY FiTS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Closet</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contacts</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <a href="login.html" class="text-decoration-none text-dark fw-bold me-3">Log In</a>
+                    <a href="signup.html" class="btn btn-black">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-wrapper">
+            
+            <h1 class="auth-title text-center">Welcome Back.</h1>
+            <p class="auth-subtitle text-center">Log in to access your digital closet twin.</p>
+            
+            <form id="loginForm">
+                
+                <div class="mb-4">
+                    <label class="form-label-custom">Email Address</label>
+                    <input type="email" id="loginEmail" class="form-control form-control-custom" placeholder="name@example.com" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-custom">Password</label>
+                    <input type="password" id="loginPassword" class="form-control form-control-custom" placeholder="Password" required>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                    <a href="forgot.html" class="text-black-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-auth mb-4">Log In</button>
+
+                <div class="text-center text-secondary small">
+                    Don't have an account? <a href="signup.html" class="text-black-link ms-1">Sign up here</a>
+                </div>
+
+            </form>
+
+        </div>
+    </section>
+
+    <footer class="bg-black text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4 class="fw-bold mb-3">MY FiTS</h4>
+                    <p class="small text-secondary mb-4">Your Digital Closet Twin.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6 class="fw-bold mb-4 text-uppercase">Subscribe to our Newsletter</h6>
+                    <div class="input-group">
+                        <input type="email" class="footer-input" placeholder="Enter Email...">
+                    </div>
+                </div>
+                <div class="col-md-4 ps-lg-5">
+                    <h6 class="fw-bold mb-4 text-uppercase">Quick Links</h6>
+                    <div class="d-flex flex-column">
+                        <a href="index.html" class="footer-link">Home</a>
+                        <a href="gallery.html" class="footer-link">Closet</a>
+                        <a href="services.html" class="footer-link">Services</a>
+                        <a href="about.html" class="footer-link">About</a>
+                        <a href="contact.html" class="footer-link">Contacts</a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5 pt-3 text-secondary small border-top border-secondary border-opacity-25">
+                &copy; 2026 MY FiTS Project. BSIT-2E.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    email: $('#loginEmail').val(),
+                    password: $('#loginPassword').val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'login_process.php',
+                    data: { formData: JSON.stringify(formData) },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 200) {
+                            alert(response.message);
+                            window.location.href = '../AppPage/mycloset.html';
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        alert("An error occurred connecting to the server.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

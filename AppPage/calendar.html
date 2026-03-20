@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY FiTS - Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        
+        body { font-family: 'Poppins', sans-serif; background-color: #fff; overflow-x: hidden; padding-top: 80px; }
+        
+        
+        .navbar-brand { font-weight: 900; font-size: 1.5rem; letter-spacing: -1px; }
+        .nav-link { color: #000 !important; font-weight: 500; margin: 0 10px; transition: color 0.3s ease; }
+        .nav-link:hover { color: #555 !important; }
+        .nav-link.active { font-weight: 800; border-bottom: 2px solid #000; }
+        .btn-black { background-color: #000; color: #fff; border-radius: 0; padding: 8px 25px; font-weight: 600; border: 2px solid #000; transition: 0.3s; }
+        .btn-black:hover { background-color: #333; border-color: #333; color: #fff; }
+
+        
+        .week-view-container { padding: 40px 0 80px 0; background-color: #fff; }
+        
+        .calendar-header-title { font-weight: 800; font-size: 2rem; margin-bottom: 0; letter-spacing: -0.5px;}
+        
+        
+        .nav-controls { display: flex; align-items: center; gap: 15px; }
+        .icon-btn { 
+            background: transparent; border: none; font-size: 1.8rem; color: #000; 
+            cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn:hover { transform: scale(1.1); }
+        
+        .week-nav-btn { 
+            background: transparent; border: 1px solid #ddd; border-radius: 50%; width: 35px; height: 35px; 
+            display: inline-flex; align-items: center; justify-content: center; color: #000; transition: 0.3s; text-decoration: none;
+        }
+        .week-nav-btn:hover { background: #000; color: #fff; border-color: #000; }
+        .date-range { font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; margin: 0 10px; }
+
+        
+        .day-card { 
+            background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 20px; 
+            height: 100%; 
+            min-height: 380px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .day-card:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: #ccc; transform: translateY(-5px); }
+        .day-card.active-day { border: 2px solid #000; } 
+        
+        .day-name { font-weight: 800; font-size: 1rem; text-transform: uppercase; margin-bottom: 2px; }
+        .day-date { font-size: 0.75rem; color: #888; font-weight: 600; margin-bottom: 15px; display: block;}
+
+        
+        .slot-wrapper { flex-grow: 1; display: flex; flex-direction: column; }
+        
+        
+        .empty-slot { 
+            border: 2px dashed #eaeaea; border-radius: 8px; flex-grow: 1; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background-color: #fcfcfc; padding: 20px; color: #aaa;
+        }
+        .btn-plan-fit { 
+            background-color: #000; color: #fff; border-radius: 50px; padding: 8px 25px; 
+            font-size: 0.8rem; font-weight: 700; border: none; margin-top: 10px;
+        }
+
+        
+        .filled-slot { 
+            border: 1px solid #eee; border-radius: 8px; flex-grow: 1; 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .fit-top { background-color: #e6e6e6; flex-grow: 1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #333; padding: 20px; }
+        .fit-bottom { background-color: #222; flex-grow: 1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #fff; padding: 20px; }
+
+        
+        .month-view-container { 
+            background-color: #050505; color: #fff; padding: 60px 0 100px 0; display: none; min-height: 100vh;
+        }
+        
+        .month-title { font-weight: 800; font-size: 3rem; letter-spacing: -1px; margin-bottom: 40px; margin-top: 20px; }
+        
+        .month-row { 
+            display: grid; grid-template-columns: repeat(7, 1fr); 
+            border-bottom: 1px solid #333; padding: 20px 0; text-align: center;
+        }
+        .month-header { font-weight: 700; font-size: 1rem; border-bottom: 2px solid #555; padding-bottom: 15px; }
+        
+        .date-cell { 
+            display: flex; flex-direction: column; align-items: center; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.2s;
+        }
+        .date-cell:hover { color: #aaa; transform: scale(1.05); }
+        
+        .pill-add { 
+            border: 1px solid #fff; border-radius: 50px; width: 40px; height: 20px; 
+            display: flex; align-items: center; justify-content: center; margin-top: 8px;
+            font-size: 1rem; font-weight: 300; transition: 0.3s;
+        }
+        .date-cell:hover .pill-add { background: #fff; color: #000; }
+
+        
+        footer { background-color: #000; color: #fff; padding: 60px 0; border-top: 1px solid #222; }
+        .footer-input { border-radius: 0; border: none; padding: 12px; width: 100%; outline: none;}
+        .footer-link { text-decoration: none; color: #999; margin-bottom: 12px; display: inline-block; transition: all 0.3s ease; font-size: 0.9rem; }
+        .footer-link:hover { color: #ffffff; padding-left: 5px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="mycloset.html">MY FiTS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="mycloset.html">My Closet</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-bold" href="calendar.html">Calendar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="support.html">Support</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a href="#" class="text-decoration-none text-dark fw-bold d-flex align-items-center dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-2"></i> Hi, User
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="../MarketingPage/index.html"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="week-view" class="week-view-container">
+        <div class="container">
+            
+            <div class="d-flex flex-wrap justify-content-between align-items-end mb-5">
+                <div>
+                    <h1 class="calendar-header-title">Outfit Calendar</h1>
+                    <p class="text-secondary mb-0 mt-1">Plan your fits for the week.</p>
+                </div>
+                
+                <div class="nav-controls mt-3 mt-md-0">
+                    <button class="icon-btn me-3" onclick="toggleCalendarView()" title="Switch to Month View">
+                        <i class="bi bi-calendar3"></i>
+                    </button>
+                    <div class="d-flex align-items-center">
+                        <a href="#" class="week-nav-btn"><i class="bi bi-chevron-left"></i></a>
+                        <span class="date-range">FEB 14 - FEB 20</span>
+                        <a href="#" class="week-nav-btn"><i class="bi bi-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+                
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Monday', 'Feb 14, 2026', true)">
+                        <div>
+                            <div class="day-name">MONDAY</div>
+                            <span class="day-date">Feb 14, 2026 <span class="badge bg-dark ms-1">School</span></span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="filled-slot" style="background-color: transparent; border: none; flex-grow: 1;">
+                                <img src="../images/Outfit1.jpg" alt="Outfit 1" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                            </div>
+                            <div class="mt-2 d-flex gap-2 w-100 mt-auto pt-2" onclick="event.stopPropagation();">
+                                <button class="btn btn-sm btn-outline-success w-100 fw-bold" style="font-size: 0.75rem;" onclick="handleOutfitAction(this)"><i class="bi bi-check-circle flex-shrink-0 me-1"></i>Wear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Tuesday', 'Feb 15, 2026', false)">
+                        <div>
+                            <div class="day-name">TUESDAY</div>
+                            <span class="day-date">Feb 15, 2026</span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="empty-slot">
+                                <i class="bi bi-calendar-x fs-3 mb-2"></i>
+                                <span class="small fw-semibold">No outfit planned</span>
+                                <button class="btn-plan-fit">+ Plan Fit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Wednesday', 'Feb 16, 2026', false)">
+                        <div>
+                            <div class="day-name">WEDNESDAY</div>
+                            <span class="day-date">Feb 16, 2026</span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="empty-slot">
+                                <i class="bi bi-calendar-x fs-3 mb-2"></i>
+                                <span class="small fw-semibold">No outfit planned</span>
+                                <button class="btn-plan-fit">+ Plan Fit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Thursday', 'Feb 17, 2026', false)">
+                        <div>
+                            <div class="day-name">THURSDAY</div>
+                            <span class="day-date">Feb 17, 2026</span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="empty-slot border-secondary">
+                                <i class="bi bi-calendar-x fs-3 mb-2"></i>
+                                <span class="small fw-semibold">No outfit planned</span>
+                                <button class="btn-plan-fit">+ Plan Fit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
+                
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Friday', 'Feb 18, 2026', false)">
+                        <div>
+                            <div class="day-name">FRIDAY</div>
+                            <span class="day-date">Feb 18, 2026</span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="empty-slot">
+                                <i class="bi bi-calendar-x fs-3 mb-2"></i>
+                                <span class="small fw-semibold">No outfit planned</span>
+                                <button class="btn-plan-fit">+ Plan Fit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Saturday', 'Feb 19, 2026', false)">
+                        <div>
+                            <div class="day-name">SATURDAY</div>
+                            <span class="day-date">Feb 19, 2026</span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="empty-slot">
+                                <i class="bi bi-calendar-x fs-3 mb-2"></i>
+                                <span class="small fw-semibold">No outfit planned</span>
+                                <button class="btn-plan-fit">+ Plan Fit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="day-card" onclick="openEditArea('Sunday', 'Feb 20, 2026', false)">
+                        <div>
+                            <div class="day-name">SUNDAY</div>
+                            <span class="day-date">Feb 20, 2026</span>
+                        </div>
+                        <div class="slot-wrapper">
+                            <div class="empty-slot">
+                                <i class="bi bi-calendar-x fs-3 mb-2"></i>
+                                <span class="small fw-semibold">No outfit planned</span>
+                                <button class="btn-plan-fit">+ Plan Fit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div id="month-view" class="month-view-container">
+        <div class="container">
+            
+            <div class="d-flex justify-content-end mb-3">
+                <button class="btn btn-outline-light rounded-pill px-4" onclick="toggleCalendarView()">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Week View
+                </button>
+            </div>
+
+            <h2 class="month-title">February 2026</h2>
+            
+            <div class="month-row month-header">
+                <div>Mon</div><div>Tue</div><div>Wed</div><div>Thur</div><div>Fri</div><div>Sat</div><div>Sun</div>
+            </div>
+            
+            <div class="month-row">
+                <div class="date-cell" onclick="openEditArea('Monday', 'Feb 26, 2026', false)">26</div>
+                <div class="date-cell" onclick="openEditArea('Tuesday', 'Feb 27, 2026', false)">27</div>
+                <div class="date-cell" onclick="openEditArea('Wednesday', 'Feb 28, 2026', false)">28</div>
+                <div class="date-cell" onclick="openEditArea('Thursday', 'Feb 29, 2026', false)">29</div>
+                <div class="date-cell" onclick="openEditArea('Friday', 'Feb 30, 2026', false)">30</div>
+                <div class="date-cell" onclick="openEditArea('Saturday', 'Feb 31, 2026', false)">31</div>
+                <div class="date-cell" onclick="openEditArea('Sunday', 'Feb 1, 2026', false)">1<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+            </div>
+            <div class="month-row">
+                <div class="date-cell" onclick="openEditArea('Monday', 'Feb 2, 2026', false)">2<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Tuesday', 'Feb 3, 2026', false)">3<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Wednesday', 'Feb 4, 2026', false)">4<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Thursday', 'Feb 5, 2026', false)">5<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Friday', 'Feb 6, 2026', false)">6<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Saturday', 'Feb 7, 2026', false)">7<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Sunday', 'Feb 8, 2026', false)">8<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+            </div>
+            <div class="month-row">
+                <div class="date-cell" onclick="openEditArea('Monday', 'Feb 9, 2026', false)">9<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Tuesday', 'Feb 10, 2026', false)">10<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Wednesday', 'Feb 11, 2026', false)">11<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Thursday', 'Feb 12, 2026', false)">12<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Friday', 'Feb 13, 2026', false)">13<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Saturday', 'Feb 14, 2026', true)">14<div class="pill-add"><i class="bi bi-check text-success"></i></div></div>
+                <div class="date-cell" onclick="openEditArea('Sunday', 'Feb 15, 2026', false)">15<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+            </div>
+
+            <h2 class="month-title mt-5">March 2026</h2>
+            <div class="month-row month-header">
+                <div>Mon</div><div>Tue</div><div>Wed</div><div>Thur</div><div>Fri</div><div>Sat</div><div>Sun</div>
+            </div>
+            <div class="month-row border-0">
+                <div class="date-cell" onclick="openEditArea('Monday', 'Mar 26, 2026', false)">26</div>
+                <div class="date-cell" onclick="openEditArea('Tuesday', 'Mar 27, 2026', false)">27</div>
+                <div class="date-cell" onclick="openEditArea('Wednesday', 'Mar 28, 2026', false)">28</div>
+                <div class="date-cell" onclick="openEditArea('Thursday', 'Mar 29, 2026', false)">29</div>
+                <div class="date-cell" onclick="openEditArea('Friday', 'Mar 30, 2026', false)">30</div>
+                <div class="date-cell" onclick="openEditArea('Saturday', 'Mar 31, 2026', false)">31</div>
+                <div class="date-cell" onclick="openEditArea('Sunday', 'Mar 1, 2026', false)">1<div class="pill-add"><i class="bi bi-plus"></i></div></div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="bg-black text-white py-5 m-0 border-top border-dark">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4 class="fw-bold mb-3">MY FiTS</h4>
+                    <p class="small text-secondary mb-4">Your Digital Closet Twin.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6 class="fw-bold mb-4 text-uppercase">Subscribe to our Newsletter</h6>
+                    <div class="input-group">
+                        <input type="email" class="footer-input" placeholder="Enter Email...">
+                    </div>
+                </div>
+                <div class="col-md-4 ps-lg-5">
+                    <h6 class="fw-bold mb-4 text-uppercase">Quick Links</h6>
+                    <div class="d-flex flex-column">
+                        <a href="mycloset.html" class="footer-link">My Closet</a>
+                        <a href="calendar.html" class="footer-link text-white">Calendar</a>
+                        <a href="support.html" class="footer-link">Support</a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5 pt-3 text-secondary small border-top border-secondary border-opacity-25">
+                &copy; 2026 MY FiTS Project. BSIT-2E.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+        function toggleCalendarView() {
+            const weekView = document.getElementById('week-view');
+            const monthView = document.getElementById('month-view');
+
+            if (weekView.style.display === 'none') {
+                weekView.style.display = 'block';
+                monthView.style.display = 'none';
+            } else {
+                weekView.style.display = 'none';
+                monthView.style.display = 'block';
+            }
+        }
+
+        function openEditArea(dayName, dateStr, isPlanned) {
+            if (isPlanned) {
+                window.location.href = 'edit.html?day=' + encodeURIComponent(dayName) + '&date=' + encodeURIComponent(dateStr);
+            } else {
+                window.location.href = 'create.html?day=' + encodeURIComponent(dayName) + '&date=' + encodeURIComponent(dateStr);
+            }
+        }
+
+        function handleOutfitAction(btn) {
+            const text = btn.innerText.trim();
+            if (text === "Wear" || text === "Worn") {
+                alert("Enjoy the day with your amazing outfit!");
+                btn.className = "btn btn-sm btn-outline-danger w-100 fw-bold";
+                btn.innerHTML = '<i class="bi bi-basket flex-shrink-0 me-1"></i>Laundry';
+            } else if (text === "Laundry") {
+                alert("Your item is on the laundry!");
+                btn.className = "btn btn-sm btn-secondary w-100 fw-bold disabled";
+                btn.innerHTML = '<i class="bi bi-check2-all flex-shrink-0 me-1"></i>In Laundry';
+                btn.onclick = null;
+            }
+        }
+    </script>
+</body>
+</html>
