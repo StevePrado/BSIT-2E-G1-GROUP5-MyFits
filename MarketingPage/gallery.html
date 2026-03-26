@@ -180,6 +180,7 @@
                         <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-date" onchange="applyFilters()"><label class="form-check-label">Date</label></div>
                         <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-sports" onchange="applyFilters()"><label class="form-check-label">Sports</label></div>
                         <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-formal" onchange="applyFilters()"><label class="form-check-label">Formal Event</label></div>
+                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-home" onchange="applyFilters()"><label class="form-check-label">At Home</label></div>
                     </div>
                 </div>
 
@@ -378,7 +379,9 @@
             const sports = sportsNode ? sportsNode.checked : false;
             const formalNode = document.getElementById('filter-occasion-formal');
             const formal = formalNode ? formalNode.checked : false;
-            const hasOccasionChecked = work || casual || date || sports || formal;
+            const homeNode = document.getElementById('filter-occasion-home');
+            const home = homeNode ? homeNode.checked : false;
+            const hasOccasionChecked = work || casual || date || sports || formal || home;
 
             const blackNode = document.getElementById('filter-color-black');
             const black = blackNode ? blackNode.checked : false;
@@ -426,6 +429,7 @@
                     if (date && item.classList.contains('occasion-date')) matchOccasion = true;
                     if (sports && item.classList.contains('occasion-sports')) matchOccasion = true;
                     if (formal && item.classList.contains('occasion-formal')) matchOccasion = true;
+                    if (home && item.classList.contains('occasion-home')) matchOccasion = true;
                 }
 
                 let matchColor = !hasColorChecked;

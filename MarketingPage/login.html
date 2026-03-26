@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,6 +32,14 @@
         .form-control-custom { border-radius: 0px; border: 1px solid #ddd; padding: 12px 15px; font-size: 0.95rem; color: #555;}
         .form-control-custom:focus { border-color: #000; box-shadow: none; }
         .form-control-custom::placeholder { color: #aaa; font-weight: 400; }
+        input::-ms-reveal, input::-webkit-credentials-auto-fill-button { display: none; }
+        
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+        }
 
         .btn-auth { background-color: #000; color: #fff; width: 100%; padding: 14px; font-weight: 700; font-size: 1.1rem; border: none; border-radius: 0; margin-top: 10px; transition: 0.3s;}
         .btn-auth:hover { background-color: #333; }
@@ -88,7 +96,12 @@
 
                 <div class="mb-4">
                     <label class="form-label-custom">Password</label>
-                    <input type="password" id="loginPassword" class="form-control form-control-custom" placeholder="Password" required>
+                    <div class="input-group">
+                        <input type="password" id="loginPassword" class="form-control form-control-custom border-end-0" placeholder="Password" required>
+                        <span class="input-group-text bg-white border-start-0" id="togglePassword" style="cursor: pointer; border-radius: 0; border: 1px solid #ddd; border-left: none;">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -173,6 +186,18 @@
                         alert("An error occurred connecting to the server.");
                     }
                 });
+            });
+
+            $('#togglePassword').click(function() {
+                var pwd = $('#loginPassword');
+                var icon = $('#toggleIcon');
+                if (pwd.attr('type') === 'password') {
+                    pwd.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                } else {
+                    pwd.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                }
             });
         });
     </script>

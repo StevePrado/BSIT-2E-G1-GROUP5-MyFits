@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@
         .btn-black:hover { background-color: #333; border-color: #333; color: #fff; }
 
         
-        .auth-section { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
+        .auth-section { flex: 1; display: flex; align-items: center; justify-content: center; padding: 120px 20px 120px 20px; }
         .auth-wrapper { width: 100%; max-width: 500px; } 
         
         .auth-title { font-weight: 900; font-size: 3rem; letter-spacing: -1.5px; margin-bottom: 5px; color: #222;}
@@ -32,6 +32,13 @@
         .form-control-custom { border-radius: 0px; border: 1px solid #ddd; padding: 12px 15px; font-size: 0.95rem; color: #555;}
         .form-control-custom:focus { border-color: #000; box-shadow: none; }
         .form-control-custom::placeholder { color: #aaa; font-weight: 400; }
+        
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+        }
 
         .btn-auth { background-color: #000; color: #fff; width: 100%; padding: 14px; font-weight: 700; font-size: 1.1rem; border: none; border-radius: 0; margin-top: 20px; transition: 0.3s;}
         .btn-auth:hover { background-color: #333; }
@@ -101,7 +108,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label class="form-label-custom">Confirm Password</label>
-                        <input type="confirm password" id="signupConfirm" class="form-control form-control-custom" placeholder="Confirm Password" required>
+                        <input type="password" id="signupConfirm" class="form-control form-control-custom" placeholder="Confirm Password" required>
                     </div>
                 </div>
 

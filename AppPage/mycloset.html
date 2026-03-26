@@ -99,6 +99,18 @@
         .upload-zone img { max-width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; }
         .upload-zone .upload-placeholder { color: #999; }
         .upload-zone .upload-placeholder i { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        
+        /* Laundry Basket */
+        .laundry-card {
+            position: relative; cursor: pointer; border-radius: 8px;
+        }
+        .laundry-card .laundry-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; z-index: 10;
+        }
+        .laundry-card:hover .laundry-overlay { opacity: 1; }
     </style>
 </head>
 <body>
@@ -173,6 +185,7 @@
                         <div class="form-check"><input class="form-check-input" type="checkbox" id="filter-occasion-date" onchange="applyFilters()"><label class="form-check-label">Date</label></div>
                         <div class="form-check"><input class="form-check-input" type="checkbox" id="filter-occasion-sports" onchange="applyFilters()"><label class="form-check-label">Sports</label></div>
                         <div class="form-check"><input class="form-check-input" type="checkbox" id="filter-occasion-formal" onchange="applyFilters()"><label class="form-check-label">Formal Event</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="filter-occasion-home" onchange="applyFilters()"><label class="form-check-label">At Home</label></div>
                     </div>
                 </div>
 
@@ -202,17 +215,22 @@
                              <label class="me-3 fw-bold">Search</label>
                              <div class="input-group" style="max-width: 600px;">
                                 <span class="input-group-text bg-white border-dark rounded-start-pill border-end-0"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control border-dark border-start-0 rounded-end-pill">
+                                <input type="text" class="form-control border-dark border-start-0 rounded-end-pill" id="searchInput" oninput="handleSearch()" placeholder="Search by name, color, category...">
                             </div>
                         </div>
-                        <div class="dropdown flex-shrink-0">
-                            <button class="btn btn-outline-dark dropdown-toggle rounded-0 w-100 px-3" type="button" data-bs-toggle="dropdown">
-                                Sort By: Date Added
+                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                            <button class="btn btn-dark fw-bold rounded-0 px-3" onclick="openLaundryBasket()">
+                                <i class="bi bi-basket me-1"></i> Laundry Room
                             </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Newest</a></li>
-                                <li><a class="dropdown-item" href="#">Oldest</a></li>
-                            </ul>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-dark dropdown-toggle rounded-0 w-100 px-3" type="button" data-bs-toggle="dropdown" id="sortDropdownBtn">
+                                    Sort By: Newest
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="handleSort('newest', this); return false;">Newest</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="handleSort('oldest', this); return false;">Oldest</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -224,118 +242,20 @@
                         <button class="filter-pill" onclick="filterCategory('shoes', this)">Shoes</button>
                     </div>
 
-                    <h6 class="section-title">Saved Outfits</h6>
-                    <div class="scroll-row mb-4">
-                        <div class="scroll-item filter-item outfit status-ready season-spring occasion-work color-black">
-                             <div class="item-card" onclick="editItem('School Fit 1')">
-                                 <img src="../images/Outfit1.jpg" class="item-img">
-                                 <div class="item-title">School Fit 1</div>
-                             </div>
-                        </div>
-                        <div class="scroll-item filter-item outfit status-ready season-fall occasion-casual color-gray">
-                             <div class="item-card" onclick="editItem('Weekend Casual')">
-                                 <img src="../images/Outfit2.jpg" class="item-img">
-                                 <div class="item-title">Weekend Casual</div>
-                             </div>
-                        </div>
-                        <div class="scroll-item filter-item outfit status-ready season-summer occasion-date color-red">
-                             <div class="item-card" onclick="editItem('Date Night')">
-                                 <img src="../images/Outfit1.jpg" class="item-img">
-                                 <div class="item-title">Date Night</div>
-                             </div>
-                        </div>
-                        <div class="scroll-item filter-item outfit status-ready season-winter occasion-sports color-white">
-                             <div class="item-card" onclick="editItem('Gym Fit')">
-                                 <img src="../images/Outfit2.jpg" class="item-img">
-                                 <div class="item-title">Gym Fit</div>
-                             </div>
-                        </div>
+                    <h6 class="section-title" data-category="outfit">Saved Outfits</h6>
+                    <div class="scroll-row mb-4" id="outfitsRow">
                     </div>
 
-                    <h6 class="section-title">Tops</h6>
-                    <div class="scroll-row mb-4">
-                        <div class="scroll-item filter-item top status-ready season-fall occasion-casual color-black">
-                            <div class="item-card" onclick="editItem('Black Sweater')">
-                                <img src="../images/Shirt1.jpg" class="item-img">
-                                <div class="item-title">Black Sweater</div>
-                            </div>
-                        </div>
-                        <div class="scroll-item filter-item top status-laundry season-summer occasion-casual color-white">
-                            <div class="item-card" onclick="editItem('Graphic Tee')">
-                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>
-                                <img src="../images/Shirt2.jpg" class="item-img">
-                                <div class="item-title text-muted">Graphic Tee</div>
-                            </div>
-                        </div>
-                        <div class="scroll-item filter-item top status-ready season-spring occasion-work color-white">
-                            <div class="item-card" onclick="editItem('White Polo')">
-                                <img src="../images/Shirt1.jpg" class="item-img">
-                                <div class="item-title">White Polo</div>
-                            </div>
-                        </div>
-                        <div class="scroll-item filter-item top status-ready season-fall occasion-casual color-blue">
-                            <div class="item-card" onclick="editItem('Denim Jacket')">
-                                <img src="../images/Shirt2.jpg" class="item-img">
-                                <div class="item-title">Denim Jacket</div>
-                            </div>
-                        </div>
-                        <div class="scroll-item filter-item top status-ready season-winter occasion-sports color-gray">
-                            <div class="item-card" onclick="editItem('Grey Hoodie')">
-                                <img src="../images/Shirt1.jpg" class="item-img">
-                                <div class="item-title">Grey Hoodie</div>
-                            </div>
-                        </div>
+                    <h6 class="section-title" data-category="top">Tops</h6>
+                    <div class="scroll-row mb-4" id="topsRow">
                     </div>
 
-                     <h6 class="section-title">Bottoms</h6>
-                     <div class="scroll-row mb-4">
-                         <div class="scroll-item filter-item bottom status-ready season-spring occasion-casual color-blue">
-                             <div class="item-card" onclick="editItem('Blue Denim')">
-                                 <img src="../images/Pants1.jpg" class="item-img">
-                                 <div class="item-title">Blue Denim</div>
-                             </div>
-                         </div>
-                         <div class="scroll-item filter-item bottom status-ready season-fall occasion-work color-black">
-                             <div class="item-card" onclick="editItem('Black Trousers')">
-                                 <img src="../images/Pants2.jpg" class="item-img">
-                                 <div class="item-title">Black Trousers</div>
-                             </div>
-                         </div>
-                         <div class="scroll-item filter-item bottom status-laundry season-summer occasion-sports color-khaki">
-                             <div class="item-card" onclick="editItem('Cargo Shorts')">
-                                 <span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>
-                                 <img src="../images/Pants1.jpg" class="item-img">
-                                 <div class="item-title text-muted">Cargo Shorts</div>
-                             </div>
-                         </div>
-                         <div class="scroll-item filter-item bottom status-ready season-winter occasion-sports color-gray">
-                             <div class="item-card" onclick="editItem('Sweatpants')">
-                                 <img src="../images/Pants2.jpg" class="item-img">
-                                 <div class="item-title">Sweatpants</div>
-                             </div>
-                         </div>
+                     <h6 class="section-title" data-category="bottom">Bottoms</h6>
+                     <div class="scroll-row mb-4" id="bottomsRow">
                      </div>
                      
-                     <h6 class="section-title">Shoes</h6>
-                     <div class="scroll-row mb-4">
-                         <div class="scroll-item filter-item shoes status-ready season-spring occasion-casual color-white">
-                             <div class="item-card" onclick="editItem('White Sneakers')">
-                                 <img src="../images/Shoes1.jpg" class="item-img">
-                                 <div class="item-title">White Sneakers</div>
-                             </div>
-                         </div>
-                         <div class="scroll-item filter-item shoes status-ready season-fall occasion-work color-black">
-                             <div class="item-card" onclick="editItem('Black Boots')">
-                                 <img src="../images/Shoes2.jpg" class="item-img">
-                                 <div class="item-title">Black Boots</div>
-                             </div>
-                         </div>
-                         <div class="scroll-item filter-item shoes status-ready season-summer occasion-sports color-blue">
-                             <div class="item-card" onclick="editItem('Running Shoes')">
-                                 <img src="../images/Shoes1.jpg" class="item-img">
-                                 <div class="item-title">Running Shoes</div>
-                             </div>
-                         </div>
+                     <h6 class="section-title" data-category="shoes">Shoes</h6>
+                     <div class="scroll-row mb-4" id="shoesRow">
                      </div>
 
                 </div>
@@ -343,8 +263,8 @@
         </div>
     </div>
 
-    <div class="fab-container">
-        <div class="fab-options">
+    <div class="fab-container" id="fabContainer">
+        <div class="fab-options" id="fabOptions">
             <button class="fab-option-btn" data-bs-toggle="modal" data-bs-target="#addClothesModal">
                 <i class="bi bi-cloud-arrow-up"></i> Add Clothes
             </button>
@@ -352,9 +272,39 @@
                 <i class="bi bi-magic"></i> Create Outfit
             </a>
         </div>
-        <button class="fab-main">
+        <button class="fab-main" id="fabMain">
             <i class="bi bi-plus-lg"></i> Create
         </button>
+    </div>
+
+    <!-- Laundry Basket Modal -->
+    <div class="modal fade" id="laundryBasketModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg" style="background-color: #f8f9fa;">
+                <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-center">
+                    <h4 class="modal-title fw-bold"><i class="bi bi-basket me-2"></i>Laundry Room</h4>
+                    <button type="button" class="btn btn-success fw-bold ms-auto me-3" id="markAllCleanBtn" onclick="markAllClean()">
+                        <i class="bi bi-check2-all me-1"></i> Mark All as Clean
+                    </button>
+                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 pt-2">
+                    <div id="laundryEmptyMsg" class="alert alert-secondary text-center fw-bold" style="display:none;">
+                        <i class="bi bi-stars me-2"></i>Your laundry basket is empty!
+                    </div>
+                    <div id="laundryContent">
+                        <h6 class="fw-bold mt-3 mb-2 text-uppercase text-secondary">Tops in Laundry</h6>
+                        <div class="scroll-row mb-4" id="laundryTopsRow" style="min-height: 100px;"></div>
+                        
+                        <h6 class="fw-bold mt-3 mb-2 text-uppercase text-secondary">Bottoms in Laundry</h6>
+                        <div class="scroll-row mb-4" id="laundryBottomsRow" style="min-height: 100px;"></div>
+                        
+                        <h6 class="fw-bold mt-3 mb-2 text-uppercase text-secondary">Shoes in Laundry</h6>
+                        <div class="scroll-row mb-4" id="laundryShoesRow" style="min-height: 100px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="addClothesModal" tabindex="-1" aria-hidden="true">
@@ -404,6 +354,7 @@
                             <option value="date">Date</option>
                             <option value="sports">Sports</option>
                             <option value="formal">Formal Event</option>
+                            <option value="home">At Home</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -423,6 +374,71 @@
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-dark w-100 rounded-3 py-2 fw-bold" id="addClothesBtn">Add to Closet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editClothesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Edit Clothes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="editUploadPreview" src="" alt="" style="width:100%; max-height: 250px; object-fit: contain; border-radius: 8px; margin-bottom: 15px;">
+                    <input type="hidden" id="editClothesId">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Item Name</label>
+                        <input type="text" id="editClothesName" class="form-control rounded-3" placeholder="e.g. Black Hoodie">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Category</label>
+                        <select id="editClothesCategory" class="form-select rounded-3">
+                            <option value="top">Top</option>
+                            <option value="bottom">Bottom</option>
+                            <option value="shoes">Shoes</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Season</label>
+                        <select id="editClothesSeason" class="form-select rounded-3">
+                            <option value="spring">Spring</option>
+                            <option value="summer">Summer</option>
+                            <option value="fall">Fall</option>
+                            <option value="winter">Winter</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Occasion</label>
+                        <select id="editClothesOccasion" class="form-select rounded-3">
+                            <option value="casual">Casual</option>
+                            <option value="work">Work</option>
+                            <option value="date">Date</option>
+                            <option value="sports">Sports</option>
+                            <option value="formal">Formal Event</option>
+                            <option value="home">At Home</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Color</label>
+                        <select id="editClothesColor" class="form-select rounded-3">
+                            <option value="black">Black</option>
+                            <option value="white">White</option>
+                            <option value="blue">Blue</option>
+                            <option value="gray">Gray</option>
+                            <option value="brown">Brown</option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="khaki">Khaki</option>
+                            <option value="yellow">Yellow</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-dark w-100 rounded-3 py-2 fw-bold" id="saveEditClothesBtn">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -463,9 +479,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-
-        function editItem(itemName) {
-            window.location.href = 'edit.html?item=' + encodeURIComponent(itemName);
+        function openEditClothesModal(id, name, category, season, occasion, color, image) {
+            document.getElementById('editClothesId').value = id;
+            document.getElementById('editClothesName').value = name;
+            document.getElementById('editClothesCategory').value = category;
+            document.getElementById('editClothesSeason').value = season;
+            document.getElementById('editClothesOccasion').value = occasion;
+            document.getElementById('editClothesColor').value = color;
+            document.getElementById('editUploadPreview').src = image;
+            
+            new bootstrap.Modal(document.getElementById('editClothesModal')).show();
         }
 
         let currentCategory = 'all';
@@ -476,14 +499,71 @@
             document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active', 'bg-black', 'text-white'));
             buttonElement.classList.add('active', 'bg-black', 'text-white');
 
-            const titles = document.querySelectorAll('.section-title');
+            // Map each category to its section title and scroll-row
+            const sectionMap = {
+                'outfit': { title: document.querySelector('.section-title[data-category="outfit"]'), row: document.getElementById('outfitsRow') },
+                'top':    { title: document.querySelector('.section-title[data-category="top"]'),    row: document.getElementById('topsRow') },
+                'bottom': { title: document.querySelector('.section-title[data-category="bottom"]'), row: document.getElementById('bottomsRow') },
+                'shoes':  { title: document.querySelector('.section-title[data-category="shoes"]'),  row: document.getElementById('shoesRow') }
+            };
+
             if (category === 'all') {
-                titles.forEach(t => t.style.display = 'block');
+                // Show all sections
+                Object.values(sectionMap).forEach(s => {
+                    if (s.title) s.title.style.display = 'block';
+                    if (s.row) s.row.style.display = 'flex';
+                });
             } else {
-                titles.forEach(t => t.style.display = 'none');
+                // Hide all sections, then show only the selected one
+                Object.entries(sectionMap).forEach(([key, s]) => {
+                    if (key === category) {
+                        if (s.title) s.title.style.display = 'block';
+                        if (s.row) s.row.style.display = 'flex';
+                    } else {
+                        if (s.title) s.title.style.display = 'none';
+                        if (s.row) s.row.style.display = 'none';
+                    }
+                });
             }
 
+            // Update FAB button based on category
+            updateFabButton(category);
+
             applyFilters();
+        }
+
+        function updateFabButton(category) {
+            const fabContainer = document.getElementById('fabContainer');
+            const fabMain = document.getElementById('fabMain');
+            const fabOptions = document.getElementById('fabOptions');
+
+            // Remove any previously attached direct-action listener
+            const newFabMain = fabMain.cloneNode(true);
+            fabMain.parentNode.replaceChild(newFabMain, fabMain);
+            newFabMain.id = 'fabMain';
+
+            if (category === 'all') {
+                // Show expandable FAB with both options
+                fabOptions.style.display = '';
+                newFabMain.innerHTML = '<i class="bi bi-plus-lg"></i> Create';
+                // Re-enable hover expand (default CSS behavior)
+            } else if (category === 'outfit') {
+                // Single action: Create Outfit
+                fabOptions.style.display = 'none';
+                newFabMain.innerHTML = '<i class="bi bi-magic"></i> Create Outfit';
+                newFabMain.addEventListener('click', () => {
+                    window.location.href = 'create.html';
+                });
+            } else {
+                // Single action: Add <Category> (opens modal with category pre-set)
+                fabOptions.style.display = 'none';
+                const labels = { 'top': 'Add Top', 'bottom': 'Add Bottom', 'shoes': 'Add Shoes' };
+                newFabMain.innerHTML = `<i class="bi bi-cloud-arrow-up"></i> ${labels[category] || 'Add Clothes'}`;
+                newFabMain.addEventListener('click', () => {
+                    document.getElementById('clothesCategory').value = category;
+                    new bootstrap.Modal(document.getElementById('addClothesModal')).show();
+                });
+            }
         }
 
         function applyFilters() {
@@ -517,7 +597,9 @@
             const sports = sportsNode ? sportsNode.checked : false;
             const formalNode = document.getElementById('filter-occasion-formal');
             const formal = formalNode ? formalNode.checked : false;
-            const hasOccasionChecked = work || casual || date || sports || formal;
+            const homeNode = document.getElementById('filter-occasion-home');
+            const home = homeNode ? homeNode.checked : false;
+            const hasOccasionChecked = work || casual || date || sports || formal || home;
 
             const blackNode = document.getElementById('filter-color-black');
             const black = blackNode ? blackNode.checked : false;
@@ -565,6 +647,7 @@
                     if (date && item.classList.contains('occasion-date')) matchOccasion = true;
                     if (sports && item.classList.contains('occasion-sports')) matchOccasion = true;
                     if (formal && item.classList.contains('occasion-formal')) matchOccasion = true;
+                    if (home && item.classList.contains('occasion-home')) matchOccasion = true;
                 }
 
                 let matchColor = !hasColorChecked;
@@ -581,26 +664,109 @@
                 }
 
                 if (matchCategory && matchStatus && matchSeason && matchOccasion && matchColor) {
-                    item.style.display = 'block';
+                    // Search filter
+                    let matchSearch = true;
+                    if (currentSearchQuery) {
+                        const titleEl = item.querySelector('.item-title');
+                        const titleText = titleEl ? titleEl.textContent.toLowerCase() : '';
+                        const classList = item.className.toLowerCase();
+                        matchSearch = titleText.includes(currentSearchQuery) || classList.includes(currentSearchQuery);
+                    }
+                    item.style.display = matchSearch ? 'block' : 'none';
                 } else {
                     item.style.display = 'none';
                 }
             });
 
-            document.querySelectorAll('.filter-grid, .scroll-row').forEach(grid => {
+            // Map row IDs to their category for visibility check
+            const rowCategoryMap = {
+                'outfitsRow': 'outfit',
+                'topsRow': 'top',
+                'bottomsRow': 'bottom',
+                'shoesRow': 'shoes'
+            };
+
+            document.querySelectorAll('.gallery-wrapper .scroll-row').forEach(grid => {
+                // Skip rows that belong to a category not currently active
+                const rowCategory = rowCategoryMap[grid.id];
+                if (currentCategory !== 'all' && rowCategory && rowCategory !== currentCategory) {
+                    return; // This row is hidden by filterCategory, skip it
+                }
+
                 let hasVisible = false;
                 grid.querySelectorAll('.filter-item').forEach(item => {
                     if (item.style.display !== 'none') hasVisible = true;
                 });
                 
+                let emptyCard = grid.querySelector('.empty-state-card');
+                if (!emptyCard) {
+                    let text = 'No items found';
+                    let targetVal = 'top';
+                    let isOutfit = false;
+                    let targetWidth = '220px';
+                    let targetHeight = '260px'; // Default for tops
+                    if (grid.id === 'outfitsRow') { text = 'Add Outfit'; isOutfit = true; targetWidth = '250px'; targetHeight = '340px'; }
+                    else if (grid.id === 'topsRow') { text = 'Add Top'; targetVal = 'top'; targetWidth = '220px'; targetHeight = '260px'; }
+                    else if (grid.id === 'bottomsRow') { text = 'Add Bottom'; targetVal = 'bottom'; targetWidth = '250px'; targetHeight = '340px'; }
+                    else if (grid.id === 'shoesRow') { text = 'Add Shoes'; targetVal = 'shoes'; targetWidth = '280px'; targetHeight = '280px'; }
+                    
+                    emptyCard = document.createElement('div');
+                    emptyCard.className = 'empty-state-card d-flex flex-column align-items-center justify-content-center text-muted me-3 mb-4';
+                    emptyCard.style.flexShrink = '0';
+                    emptyCard.style.order = '-1'; // Ensure it's ALWAYS the first item on the left
+                    emptyCard.dataset.cardWidth = targetWidth; // Store the exact CSS width needed for this specific grid
+                    emptyCard.dataset.cardHeight = targetHeight; // Store the exact CSS height needed
+                    emptyCard.style.border = '2px dashed #ddd';
+                    emptyCard.style.borderRadius = '12px';
+                    emptyCard.style.backgroundColor = '#f9f9f9';
+                    emptyCard.style.cursor = 'pointer';
+                    emptyCard.style.transition = 'all 0.3s ease';
+                    emptyCard.innerHTML = `<i class="bi bi-plus-circle fs-3 mb-2"></i><span class="fw-bold" style="font-size: 0.85rem;">${text}</span>`;
+                    
+                    emptyCard.addEventListener('mouseenter', () => { emptyCard.style.backgroundColor = '#f0f0f0'; emptyCard.style.borderColor = '#aaa'; emptyCard.style.color = '#333'; });
+                    emptyCard.addEventListener('mouseleave', () => { emptyCard.style.backgroundColor = '#f9f9f9'; emptyCard.style.borderColor = '#ddd'; emptyCard.style.color = '#aaa'; });
+                    
+                    emptyCard.onclick = () => {
+                        if (isOutfit) {
+                            window.location.href = 'create.html';
+                        } else {
+                            document.getElementById('clothesCategory').value = targetVal;
+                            new bootstrap.Modal(document.getElementById('addClothesModal')).show();
+                        }
+                    };
+                    grid.appendChild(emptyCard);
+                }
+                
+                if (!hasVisible) {
+                    // BANNER MODE: row is empty, stretch full width
+                    emptyCard.style.width = '100%';
+                    emptyCard.style.minWidth = '0';
+                    emptyCard.style.height = '180px';
+                    emptyCard.style.minHeight = '180px';
+                    emptyCard.style.marginRight = '0';
+                    emptyCard.classList.remove('me-3');
+                } else {
+                    // CARD MODE: row has items, shrink to EXACT card width and height
+                    const w = emptyCard.dataset.cardWidth || '220px';
+                    const h = emptyCard.dataset.cardHeight || '300px';
+                    emptyCard.style.width = w;
+                    emptyCard.style.minWidth = w;
+                    emptyCard.style.height = 'auto'; // Flex stretch handles this cleanly
+                    emptyCard.style.minHeight = h; // Force minimum height match
+                    emptyCard.style.marginRight = '';
+                    if (!emptyCard.classList.contains('me-3')) emptyCard.classList.add('me-3');
+                }
+                
+                emptyCard.style.display = 'flex';
+
                 if (currentCategory === 'all') {
                     grid.style.display = 'flex';
                     grid.style.flexWrap = 'nowrap';
-                    grid.style.overflowX = 'auto';
+                    grid.style.overflowX = hasVisible ? 'auto' : 'hidden';
                 } else {
-                    grid.style.display = hasVisible ? 'flex' : 'none';
+                    grid.style.display = 'flex';
                     grid.style.flexWrap = 'wrap';
-                    grid.style.overflowX = 'visible';
+                    grid.style.overflowX = 'hidden';
                 }
             });
         }
@@ -628,8 +794,9 @@
             const season = document.getElementById('clothesSeason').value;
             const occasion = document.getElementById('clothesOccasion').value;
             const color = document.getElementById('clothesColor').value;
+            const fileInput = document.getElementById('clothesFileInput');
 
-            if (!uploadedImageData) {
+            if (!fileInput.files[0]) {
                 alert('Please upload an image first!');
                 return;
             }
@@ -638,39 +805,436 @@
                 return;
             }
 
-            const categoryMap = { 'top': 1, 'bottom': 2, 'shoes': 3 };
-            const rows = document.querySelectorAll('.scroll-row');
-            const targetRow = rows[categoryMap[category]];
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+            formData.append('name', name);
+            formData.append('category', category);
+            formData.append('season', season);
+            formData.append('occasion', occasion);
+            formData.append('color', color);
+
+            const btn = document.getElementById('addClothesBtn');
+            btn.innerHTML = 'Uploading...';
+            btn.disabled = true;
+
+            fetch('add_clothes.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = 'Add to Closet';
+                btn.disabled = false;
+                
+                if (data.status === 200) {
+                    renderClothItem(data.item);
+                    
+                    document.getElementById('clothesFileInput').value = '';
+                    document.getElementById('clothesName').value = '';
+                    document.getElementById('uploadPreview').style.display = 'none';
+                    document.getElementById('uploadPlaceholder').style.display = 'block';
+                    document.getElementById('uploadZone').classList.remove('has-image');
+                    bootstrap.Modal.getInstance(document.getElementById('addClothesModal')).hide();
+                } else {
+                    alert(data.message || 'Error occurred during upload.');
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = 'Add to Closet';
+                btn.disabled = false;
+                console.error(err);
+                alert('Network error while uploading.');
+            });
+        });
+
+        document.getElementById('saveEditClothesBtn').addEventListener('click', function() {
+            const id = document.getElementById('editClothesId').value;
+            const name = document.getElementById('editClothesName').value.trim();
+            const category = document.getElementById('editClothesCategory').value;
+            const season = document.getElementById('editClothesSeason').value;
+            const occasion = document.getElementById('editClothesOccasion').value;
+            const color = document.getElementById('editClothesColor').value;
+            
+            if (!name) return alert('Name required');
+            const btn = this; btn.disabled = true; btn.innerHTML = 'Saving...';
+            
+            fetch('update_clothes.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ cloth_id: id, name, category, season, occasion, color })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    location.reload(); 
+                } else {
+                    alert(data.message);
+                    btn.disabled = false; btn.innerHTML = 'Save Changes';
+                }
+            })
+            .catch(()=> { alert('Network error'); btn.disabled = false; btn.innerHTML = 'Save Changes'; });
+        });
+
+        document.getElementById('saveEditClothesBtn').addEventListener('click', function() {
+            const id = document.getElementById('editClothesId').value;
+            const name = document.getElementById('editClothesName').value.trim();
+            const category = document.getElementById('editClothesCategory').value;
+            const season = document.getElementById('editClothesSeason').value;
+            const occasion = document.getElementById('editClothesOccasion').value;
+            const color = document.getElementById('editClothesColor').value;
+            
+            if (!name) return alert('Name required');
+            const btn = this; btn.disabled = true; btn.innerHTML = 'Saving...';
+            
+            fetch('update_clothes.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ cloth_id: id, name, category, season, occasion, color })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    location.reload(); 
+                } else {
+                    alert(data.message);
+                    btn.disabled = false; btn.innerHTML = 'Save Changes';
+                }
+            })
+            .catch(()=> { alert('Network error'); btn.disabled = false; btn.innerHTML = 'Save Changes'; });
+        });
+
+        function renderClothItem(item) {
+            const categoryMap = { 'top': 'topsRow', 'bottom': 'bottomsRow', 'shoes': 'shoesRow' };
+            if (!categoryMap[item.category]) return;
+            const targetRow = document.getElementById(categoryMap[item.category]);
 
             const newItem = document.createElement('div');
-            newItem.className = `scroll-item filter-item ${category} status-ready season-${season} occasion-${occasion} color-${color}`;
+            newItem.className = `scroll-item filter-item ${item.category} status-${item.status} season-${item.season} occasion-${item.occasion} color-${item.color}`;
+            newItem.setAttribute('data-id', item.id);
+            // Replace single quotes with HTML entities before passing to function to prevent string breaks
+            const safeName = item.name.replace(/'/g, "\\'");
             newItem.innerHTML = `
-                <div class="item-card" onclick="editItem('${name}')">
-                    <img src="${uploadedImageData}" class="item-img">
-                    <div class="item-title">${name}</div>
+                <div class="item-card" style="position: relative;" onclick="openEditClothesModal(${item.id}, '${safeName}', '${item.category}', '${item.season}', '${item.occasion}', '${item.color}', '${item.image}')">
+                    ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>' : ''}
+                    <button class="btn-delete-cloth" onclick="event.stopPropagation(); deleteClothItem(${item.id}, this);" title="Delete item"
+                        style="position: absolute; top: 6px; right: 6px; z-index: 10; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(255,77,77,0.9); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; line-height: 1; padding: 0;">
+                        <i class="bi bi-trash3" style="font-size: 12px;"></i>
+                    </button>
+                    <img src="${item.image}" class="item-img" style="object-fit: contain;">
+                    <div class="item-title ${item.status === 'laundry' ? 'text-muted' : ''}">${item.name}</div>
                 </div>
             `;
 
+            newItem.addEventListener('mouseenter', () => { newItem.querySelector('.btn-delete-cloth').style.opacity = '1'; });
+            newItem.addEventListener('mouseleave', () => { newItem.querySelector('.btn-delete-cloth').style.opacity = '0'; });
+
             if (targetRow) {
-                targetRow.appendChild(newItem);
+                targetRow.prepend(newItem);
             }
+            applyFilters();
+        }
 
-            uploadedImageData = null;
-            document.getElementById('clothesFileInput').value = '';
-            document.getElementById('clothesName').value = '';
-            document.getElementById('clothesCategory').value = 'top';
-            document.getElementById('clothesSeason').value = 'spring';
-            document.getElementById('clothesOccasion').value = 'casual';
-            document.getElementById('clothesColor').value = 'black';
-            document.getElementById('uploadPreview').style.display = 'none';
-            document.getElementById('uploadPreview').src = '';
-            document.getElementById('uploadPlaceholder').style.display = 'block';
-            document.getElementById('uploadZone').classList.remove('has-image');
+        function deleteClothItem(clothId, btnEl) {
+            if (!confirm('Delete this clothing item? This cannot be undone.')) return;
+            
+            btnEl.disabled = true;
+            
+            fetch('delete_clothes.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cloth_id=' + clothId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    const card = document.querySelector(`.filter-item[data-id="${clothId}"]`);
+                    if (card) {
+                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            card.remove();
+                            applyFilters(); // Instantly refresh layout so Add buttons stretch to 100% if row is now empty
+                        }, 300);
+                    }
+                } else {
+                    alert(data.message);
+                    btnEl.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Network error while deleting.');
+                btnEl.disabled = false;
+            });
+        }
 
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addClothesModal'));
-            modal.hide();
+        function editOutfit(id) {
+            window.location.href = 'create.html?id=' + id;
+        }
 
-            alert(`"${name}" has been added to your closet!`);
+        function renderOutfitItem(outfit) {
+            const targetRow = document.getElementById('outfitsRow');
+            if (!targetRow) return;
+
+            const newItem = document.createElement('div');
+            const statusClass = outfit.in_laundry ? 'status-laundry' : 'status-ready';
+            newItem.className = `scroll-item filter-item outfit ${statusClass} season-${outfit.season} occasion-${outfit.occasion} color-${outfit.color}`;
+            newItem.setAttribute('data-outfit-id', outfit.id);
+            
+            let imagesHtml = '';
+            let hasImages = false;
+            if (outfit.top_image) { imagesHtml += `<img src="${outfit.top_image}" style="width: auto; height: 110px; object-fit: contain; z-index: 2; position: relative;">`; hasImages = true; }
+            if (outfit.bottom_image) { imagesHtml += `<img src="${outfit.bottom_image}" style="width: auto; height: 130px; object-fit: contain; z-index: 1; position: relative; margin-top: ${outfit.top_image ? '-40px' : '0'};">`; hasImages = true; }
+            if (outfit.shoes_image) { imagesHtml += `<img src="${outfit.shoes_image}" style="width: auto; height: 60px; object-fit: contain; z-index: 3; position: relative; margin-top: ${outfit.bottom_image ? '-30px' : (outfit.top_image ? '-20px' : '0')};">`; hasImages = true; }
+            
+            if (!hasImages) imagesHtml = '<div style="height: 220px; display: flex; align-items:center; justify-content:center; color:#999; font-weight:600;">No Items</div>';
+
+            newItem.innerHTML = `
+                <div class="item-card" style="position: relative;" onclick="editOutfit(${outfit.id})">
+                    ${outfit.in_laundry ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2" style="z-index: 20;">In Laundry</span>' : ''}
+                    <button class="btn-delete-cloth" onclick="event.stopPropagation(); deleteOutfitItem(${outfit.id}, this);" title="Delete outfit"
+                        style="position: absolute; top: 6px; right: 6px; z-index: 10; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(255,77,77,0.9); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; line-height: 1; padding: 0;">
+                        <i class="bi bi-trash3" style="font-size: 12px;"></i>
+                    </button>
+                    <div class="d-flex flex-column align-items-center justify-content-center w-100" style="height: 220px; overflow: hidden; mix-blend-mode: multiply;">
+                        ${imagesHtml}
+                    </div>
+                    <div class="item-title ${outfit.in_laundry ? 'text-muted' : ''}">${outfit.name}</div>
+                </div>
+            `;
+
+            newItem.addEventListener('mouseenter', () => { newItem.querySelector('.btn-delete-cloth').style.opacity = '1'; });
+            newItem.addEventListener('mouseleave', () => { newItem.querySelector('.btn-delete-cloth').style.opacity = '0'; });
+
+            targetRow.prepend(newItem);
+        }
+
+        function deleteOutfitItem(outfitId, btnEl) {
+            if (!confirm('Delete this outfit? This cannot be undone.')) return;
+            btnEl.disabled = true;
+            
+            fetch('delete_outfit.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'outfit_id=' + outfitId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    const card = document.querySelector(`.filter-item[data-outfit-id="${outfitId}"]`);
+                    if (card) {
+                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            card.remove();
+                            applyFilters();
+                        }, 300);
+                    }
+                } else {
+                    alert(data.message);
+                    btnEl.disabled = false;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Network error while deleting.');
+                btnEl.disabled = false;
+            });
+        }
+
+        let currentSearchQuery = '';
+        let currentSortOrder = 'newest';
+
+        function handleSearch() {
+            currentSearchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            applyFilters();
+        }
+
+        function handleSort(order, linkEl) {
+            currentSortOrder = order;
+            const label = order === 'newest' ? 'Sort By: Newest' : 'Sort By: Oldest';
+            document.getElementById('sortDropdownBtn').textContent = label;
+
+            // Sort items within each visible scroll-row
+            document.querySelectorAll('.scroll-row').forEach(row => {
+                const items = Array.from(row.querySelectorAll('.filter-item'));
+                if (items.length === 0) return;
+
+                items.sort((a, b) => {
+                    const aId = parseInt(a.getAttribute('data-id') || a.getAttribute('data-outfit-id') || 0);
+                    const bId = parseInt(b.getAttribute('data-id') || b.getAttribute('data-outfit-id') || 0);
+                    return order === 'newest' ? bId - aId : aId - bId;
+                });
+
+                items.forEach(item => row.appendChild(item));
+                // Move empty-state-card back to front
+                const emptyCard = row.querySelector('.empty-state-card');
+                if (emptyCard) row.prepend(emptyCard);
+            });
+        }
+
+        function openLaundryBasket() {
+            const topsRow = document.getElementById('laundryTopsRow');
+            const bottomsRow = document.getElementById('laundryBottomsRow');
+            const shoesRow = document.getElementById('laundryShoesRow');
+            
+            topsRow.innerHTML = ''; bottomsRow.innerHTML = ''; shoesRow.innerHTML = '';
+            
+            let laundryCount = 0;
+            
+            // Reconstruct laundry items looking at the main grid elements
+            document.querySelectorAll('.filter-item.status-laundry:not(.outfit)').forEach(item => {
+                laundryCount++;
+                const isTop = item.classList.contains('top');
+                const isBottom = item.classList.contains('bottom');
+                const clothId = item.getAttribute('data-id');
+                const img = item.querySelector('.item-img').src;
+                const title = item.querySelector('.item-title').textContent;
+                
+                const card = document.createElement('div');
+                card.className = 'scroll-item laundry-card item-card p-2 text-center';
+                let cardWidth = isTop ? '220px' : (isBottom ? '250px' : '280px');
+                let imgHeight = isTop ? '220px' : (isBottom ? '220px' : '150px');
+                card.style.width = cardWidth;
+                card.style.flexShrink = '0';
+                card.setAttribute('data-l-id', clothId);
+                
+                card.innerHTML = `
+                    <div class="laundry-overlay">
+                        <button class="btn btn-success fw-bold p-2 px-3 shadow" onclick="markItemClean(${clothId}, this)">
+                            <i class="bi bi-check-circle me-1"></i>Ready to Wear
+                        </button>
+                    </div>
+                    <img src="${img}" style="width:100%; height:${imgHeight}; object-fit:contain;">
+                    <div class="fw-bold text-uppercase mt-2" style="font-size:0.8rem;">${title}</div>
+                `;
+                
+                if (isTop) topsRow.appendChild(card);
+                else if (isBottom) bottomsRow.appendChild(card);
+                else shoesRow.appendChild(card);
+            });
+            
+            if (laundryCount === 0) {
+                document.getElementById('laundryEmptyMsg').style.display = 'block';
+                document.getElementById('laundryContent').style.display = 'none';
+                document.getElementById('markAllCleanBtn').disabled = true;
+            } else {
+                document.getElementById('laundryEmptyMsg').style.display = 'none';
+                document.getElementById('laundryContent').style.display = 'block';
+                document.getElementById('markAllCleanBtn').disabled = false;
+            }
+            
+            new bootstrap.Modal(document.getElementById('laundryBasketModal')).show();
+        }
+
+        function markItemClean(clothId, btnEl) {
+            btnEl.disabled = true;
+            btnEl.innerHTML = 'Updating...';
+            
+            fetch('update_laundry_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cloth_id=' + clothId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 200) {
+                    const lCard = document.querySelector(`.laundry-card[data-l-id="${clothId}"]`);
+                    if(lCard) {
+                        lCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        lCard.style.opacity = '0'; lCard.style.transform = 'scale(0.8)';
+                        setTimeout(() => lCard.remove(), 300);
+                    }
+                    
+                    const mCard = document.querySelector(`.filter-item[data-id="${clothId}"]`);
+                    if(mCard) {
+                        mCard.classList.remove('status-laundry');
+                        mCard.classList.add('status-ready');
+                        const badge = mCard.querySelector('.badge.bg-danger');
+                        if(badge) badge.remove();
+                        const img = mCard.querySelector('.item-img');
+                        const title = mCard.querySelector('.item-title');
+                        if (img) img.style.opacity = '1';
+                        if (title) title.classList.remove('text-muted');
+                    }
+                    
+                    setTimeout(() => applyFilters(), 350);
+                } else {
+                    alert(data.message);
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = '<i class="bi bi-check-circle me-1"></i>Ready to Wear';
+                }
+            })
+            .catch(err => alert('Network error.'));
+        }
+
+        function markAllClean() {
+            const btn = document.getElementById('markAllCleanBtn');
+            btn.disabled = true;
+            btn.innerHTML = 'Updating...';
+            
+            fetch('update_laundry_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'bulk_action=mark_all_clean'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 200) {
+                    document.querySelectorAll('.filter-item.status-laundry:not(.outfit)').forEach(mCard => {
+                        mCard.classList.remove('status-laundry');
+                        mCard.classList.add('status-ready');
+                        const badge = mCard.querySelector('.badge.bg-danger');
+                        if(badge) badge.remove();
+                        const img = mCard.querySelector('.item-img');
+                        const title = mCard.querySelector('.item-title');
+                        if (img) img.style.opacity = '1';
+                        if (title) title.classList.remove('text-muted');
+                    });
+                    
+                    document.getElementById('laundryEmptyMsg').style.display = 'block';
+                    document.getElementById('laundryContent').style.display = 'none';
+                    
+                    applyFilters();
+                    btn.innerHTML = '<i class="bi bi-check2-all me-1"></i> Mark All as Clean';
+                } else {
+                    alert(data.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check2-all me-1"></i> Mark All as Clean';
+                }
+            })
+            .catch(err => alert('Network error.'));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('get_clothes.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    data.clothes.reverse().forEach(item => {
+                        renderClothItem(item);
+                    });
+                }
+                applyFilters();
+            })
+            .catch(err => {
+                console.error("Could not load clothes: ", err);
+                applyFilters();
+            });
+
+            fetch('get_outfits.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200) {
+                    data.outfits.reverse().forEach(outfit => {
+                        renderOutfitItem(outfit);
+                    });
+                }
+                applyFilters();
+            })
+            .catch(err => console.error("Could not load outfits: ", err));
         });
     </script>
 </body>
