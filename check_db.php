@@ -1,11 +1,12 @@
 <?php
-require 'db_connect.php';
+// Include your existing connection file
+include 'db_connect.php';
 
-$res = $conn->query("SHOW CREATE TABLE outfits");
-$row = $res->fetch_row();
-echo $row[1] . "\n\n";
-
-$res = $conn->query("SHOW CREATE TABLE clothes");
-$row = $res->fetch_row();
-echo $row[1] . "\n\n";
+if ($conn->ping()) {
+    echo "<h1>Connection Successful!</h1>";
+    echo "<p>Your system is successfully talking to the <strong>myfits_db</strong> database.</p>";
+} else {
+    echo "<h1>Connection Error</h1>";
+    echo "<p>Error: " . $conn->error . "</p>";
+}
 ?>
