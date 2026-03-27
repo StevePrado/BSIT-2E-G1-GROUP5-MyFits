@@ -18,7 +18,7 @@ $user_id = $_SESSION['user_id'];
 $outfit_id = intval($_GET['id']);
 
 $query = "SELECT 
-    o.id, o.name, o.season, o.occasion, o.color, 
+    o.id, o.name, o.season, o.occasion, o.color, o.status,
     o.top_id, o.bottom_id, o.shoes_id,
     t.image as top_image, b.image as bottom_image, s.image as shoes_image
     FROM outfits o

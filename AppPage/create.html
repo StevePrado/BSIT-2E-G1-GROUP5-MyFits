@@ -243,7 +243,11 @@
                     <input type="text" class="name-input" placeholder="Title your outfit...">
                     
                     <ul class="tag-list mb-3">
-                        <li class="tag-item" data-bs-toggle="modal" data-bs-target="#seasonModal">
+                        <li class="tag-item" data-bs-toggle="modal" data-bs-target="#statusModal">
+                            <div><span class="fs-5 me-2">✅</span> Status</div>
+                            <div><span id="val-status" class="fw-bold fw-medium text-white">Available</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
+                        </li>
+                        <li class="tag-item mt-2" data-bs-toggle="modal" data-bs-target="#seasonModal">
                             <div><span class="fs-5 me-2">🌸</span> Season</div>
                             <div><span id="val-season" class="fw-bold fw-medium text-white">Summer</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
                         </li>
@@ -317,6 +321,23 @@
         </div>
     </footer>
 
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title fw-bold">Select Status</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-flush option-list" data-target="val-status">
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">✅</span> Available</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🧺</span> In Laundry</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="occasionModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content border-0 rounded-4">
@@ -326,13 +347,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group list-group-flush option-list" data-target="val-occasion">
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium active"><span class="fs-5 me-2">🌍</span> Any Occasion</button>
                         <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">💼</span> Work</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🎒</span> School</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">❤️</span> Date</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👕</span> Casual</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">⚽</span> Sports</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👔</span> Formal Event</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🏠</span> At Home</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">☕</span> Casual</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👔</span> Formal</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🎉</span> Party</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">💪</span> Gym</button>
                     </div>
                 </div>
             </div>
@@ -464,14 +484,17 @@
                 $('#previewCard').html(previewHtml);
 
                 var outfitName = $('.name-input').val() || 'Untitled Outfit';
+                var status = $('#val-status').text();
                 var occasion = $('#val-occasion').text();
                 var season = $('#val-season').text();
                 var color = $('#val-color').text();
                 var scheduleDate = $('#scheduleDateInput').val();
-                let displayDate = scheduleDate ? scheduleDate : 'Unscheduled';
+                var repeatWeekly = $('#repeatWeeklyToggle').is(':checked');
+                let displayDate = scheduleDate ? scheduleDate + (repeatWeekly ? ' (Weekly)' : '') : 'Unscheduled';
 
                 $('#previewInfo').html(
                     '<h5 class="fw-bold mb-3">' + outfitName + '</h5>' +
+                    '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">✅</span> ' + status + '</span>' +
                     '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">🌸</span> ' + season + '</span>' +
                     '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">💼</span> ' + occasion + '</span><br>' +
                     '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">🎨</span> ' + color + '</span>' +
@@ -490,11 +513,20 @@
                 let bottomId = $('#slot-bottom .equipped-img').data('id') || null;
                 let shoesId = $('#slot-shoes .equipped-img').data('id') || null;
                 let name = $('.name-input').val().trim() || 'Untitled Outfit';
-                let season = $('#val-season').text().trim();
-                let occasion = $('#val-occasion').text().trim();
-                let color = $('#val-color').text().trim();
+                let rawStatus = $('#val-status').text().trim();
+                let status = rawStatus === 'In Laundry' ? 'laundry' : 'ready';
                 
-                let outfitData = { id: currentOutfitId, top_id: topId, bottom_id: bottomId, shoes_id: shoesId, name: name, season: season, occasion: occasion, color: color };
+                let rawSeason = $('#val-season').text().trim();
+                let season = rawSeason === 'Any Season' ? 'all-season' : rawSeason.toLowerCase();
+                
+                let rawOccasion = $('#val-occasion').text().trim();
+                let occasion = rawOccasion === 'Any Occasion' ? 'any-occasion' : rawOccasion.toLowerCase();
+                
+                let color = $('#val-color').text().trim().toLowerCase();
+                let scheduleDate = $('#scheduleDateInput').val() || null;
+                let repeatWeekly = $('#repeatWeeklyToggle').is(':checked') ? 1 : 0;
+                
+                let outfitData = { id: currentOutfitId, top_id: topId, bottom_id: bottomId, shoes_id: shoesId, name: name, season: season, occasion: occasion, color: color, status: status, scheduleDate: scheduleDate, repeatWeekly: repeatWeekly };
                 
                 let btn = $(this);
                 btn.text('Saving...').prop('disabled', true);
@@ -573,8 +605,8 @@
                     let $el = $(this);
                     
                     let matchStatus = checkedTypes.status.length === 0 || checkedTypes.status.some(c => $el.hasClass(c) || (c === 'status-ready' && !$el.hasClass('status-laundry')));
-                    let matchSeason = checkedTypes.season.length === 0 || checkedTypes.season.some(c => $el.hasClass(c));
-                    let matchOccasion = checkedTypes.occasion.length === 0 || checkedTypes.occasion.some(c => $el.hasClass(c));
+                    let matchSeason = checkedTypes.season.length === 0 || checkedTypes.season.some(c => $el.hasClass(c) || $el.hasClass('season-all-season'));
+                    let matchOccasion = checkedTypes.occasion.length === 0 || checkedTypes.occasion.some(c => $el.hasClass(c) || $el.hasClass('occasion-any-occasion'));
                     let matchColor = checkedTypes.color.length === 0 || checkedTypes.color.some(c => $el.hasClass(c));
                     
                     let itemName = $el.data('name').toLowerCase();
@@ -674,9 +706,10 @@
                     if (data.status === 200 && data.outfit) {
                         let outfit = data.outfit;
                         $('.name-input').val(outfit.name);
-                        $('#val-season').text(outfit.season);
-                        $('#val-occasion').text(outfit.occasion);
-                        $('#val-color').text(outfit.color);
+                        $('#val-status').text(outfit.status === 'laundry' ? 'In Laundry' : 'Available');
+                        $('#val-season').text(outfit.season === 'all-season' ? 'Any Season' : (outfit.season.charAt(0).toUpperCase() + outfit.season.slice(1)));
+                        $('#val-occasion').text(outfit.occasion === 'any-occasion' ? 'Any Occasion' : (outfit.occasion.charAt(0).toUpperCase() + outfit.occasion.slice(1)));
+                        $('#val-color').text(outfit.color.charAt(0).toUpperCase() + outfit.color.slice(1));
                         
                         if (outfit.top_image) $('#slot-top').html(`<img src="${outfit.top_image}" class="equipped-img" data-img="${outfit.top_image}" data-id="${outfit.top_id}"><button class="remove-item-btn" onclick="removeEquipped('top', event)">&times;</button>`);
                         if (outfit.bottom_image) $('#slot-bottom').html(`<img src="${outfit.bottom_image}" class="equipped-img" data-img="${outfit.bottom_image}" data-id="${outfit.bottom_id}"><button class="remove-item-btn" onclick="removeEquipped('bottom', event)">&times;</button>`);

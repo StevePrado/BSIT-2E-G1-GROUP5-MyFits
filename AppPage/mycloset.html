@@ -340,6 +340,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-uppercase">Season</label>
                         <select id="clothesSeason" class="form-select rounded-3">
+                            <option value="all-season">Any Season</option>
                             <option value="spring">Spring</option>
                             <option value="summer">Summer</option>
                             <option value="fall">Fall</option>
@@ -349,12 +350,12 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-uppercase">Occasion</label>
                         <select id="clothesOccasion" class="form-select rounded-3">
-                            <option value="casual">Casual</option>
+                            <option value="any-occasion">Any Occasion</option>
                             <option value="work">Work</option>
-                            <option value="date">Date</option>
-                            <option value="sports">Sports</option>
-                            <option value="formal">Formal Event</option>
-                            <option value="home">At Home</option>
+                            <option value="casual">Casual</option>
+                            <option value="formal">Formal</option>
+                            <option value="party">Party</option>
+                            <option value="gym">Gym</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -403,8 +404,16 @@
                         </select>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Status</label>
+                        <select id="editClothesStatus" class="form-select rounded-3">
+                            <option value="ready">Ready to Wear</option>
+                            <option value="laundry">In Laundry</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-bold small text-uppercase">Season</label>
                         <select id="editClothesSeason" class="form-select rounded-3">
+                            <option value="all-season">Any Season</option>
                             <option value="spring">Spring</option>
                             <option value="summer">Summer</option>
                             <option value="fall">Fall</option>
@@ -414,12 +423,12 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-uppercase">Occasion</label>
                         <select id="editClothesOccasion" class="form-select rounded-3">
-                            <option value="casual">Casual</option>
+                            <option value="any-occasion">Any Occasion</option>
                             <option value="work">Work</option>
-                            <option value="date">Date</option>
-                            <option value="sports">Sports</option>
-                            <option value="formal">Formal Event</option>
-                            <option value="home">At Home</option>
+                            <option value="casual">Casual</option>
+                            <option value="formal">Formal</option>
+                            <option value="party">Party</option>
+                            <option value="gym">Gym</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -479,13 +488,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function openEditClothesModal(id, name, category, season, occasion, color, image) {
+        function openEditClothesModal(id, name, category, season, occasion, color, status, image) {
             document.getElementById('editClothesId').value = id;
             document.getElementById('editClothesName').value = name;
             document.getElementById('editClothesCategory').value = category;
             document.getElementById('editClothesSeason').value = season;
             document.getElementById('editClothesOccasion').value = occasion;
             document.getElementById('editClothesColor').value = color;
+            document.getElementById('editClothesStatus').value = status;
             document.getElementById('editUploadPreview').src = image;
             
             new bootstrap.Modal(document.getElementById('editClothesModal')).show();
@@ -634,6 +644,7 @@
 
                 let matchSeason = !hasSeasonChecked;
                 if (hasSeasonChecked) {
+                    if (item.classList.contains('season-all-season')) matchSeason = true;
                     if (spring && item.classList.contains('season-spring')) matchSeason = true;
                     if (summer && item.classList.contains('season-summer')) matchSeason = true;
                     if (fall && item.classList.contains('season-fall')) matchSeason = true;
@@ -642,6 +653,7 @@
 
                 let matchOccasion = !hasOccasionChecked;
                 if (hasOccasionChecked) {
+                    if (item.classList.contains('occasion-any-occasion')) matchOccasion = true;
                     if (work && item.classList.contains('occasion-work')) matchOccasion = true;
                     if (casual && item.classList.contains('occasion-casual')) matchOccasion = true;
                     if (date && item.classList.contains('occasion-date')) matchOccasion = true;
@@ -854,6 +866,7 @@
             const season = document.getElementById('editClothesSeason').value;
             const occasion = document.getElementById('editClothesOccasion').value;
             const color = document.getElementById('editClothesColor').value;
+            const status = document.getElementById('editClothesStatus').value;
             
             if (!name) return alert('Name required');
             const btn = this; btn.disabled = true; btn.innerHTML = 'Saving...';
@@ -861,35 +874,7 @@
             fetch('update_clothes.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ cloth_id: id, name, category, season, occasion, color })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 200) {
-                    location.reload(); 
-                } else {
-                    alert(data.message);
-                    btn.disabled = false; btn.innerHTML = 'Save Changes';
-                }
-            })
-            .catch(()=> { alert('Network error'); btn.disabled = false; btn.innerHTML = 'Save Changes'; });
-        });
-
-        document.getElementById('saveEditClothesBtn').addEventListener('click', function() {
-            const id = document.getElementById('editClothesId').value;
-            const name = document.getElementById('editClothesName').value.trim();
-            const category = document.getElementById('editClothesCategory').value;
-            const season = document.getElementById('editClothesSeason').value;
-            const occasion = document.getElementById('editClothesOccasion').value;
-            const color = document.getElementById('editClothesColor').value;
-            
-            if (!name) return alert('Name required');
-            const btn = this; btn.disabled = true; btn.innerHTML = 'Saving...';
-            
-            fetch('update_clothes.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ cloth_id: id, name, category, season, occasion, color })
+                body: new URLSearchParams({ cloth_id: id, name, category, season, occasion, color, status })
             })
             .then(res => res.json())
             .then(data => {
@@ -914,7 +899,7 @@
             // Replace single quotes with HTML entities before passing to function to prevent string breaks
             const safeName = item.name.replace(/'/g, "\\'");
             newItem.innerHTML = `
-                <div class="item-card" style="position: relative;" onclick="openEditClothesModal(${item.id}, '${safeName}', '${item.category}', '${item.season}', '${item.occasion}', '${item.color}', '${item.image}')">
+                <div class="item-card" style="position: relative;" onclick="openEditClothesModal(${item.id}, '${safeName}', '${item.category}', '${item.season}', '${item.occasion}', '${item.color}', '${item.status}', '${item.image}')">
                     ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>' : ''}
                     <button class="btn-delete-cloth" onclick="event.stopPropagation(); deleteClothItem(${item.id}, this);" title="Delete item"
                         style="position: absolute; top: 6px; right: 6px; z-index: 10; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(255,77,77,0.9); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; line-height: 1; padding: 0;">
@@ -981,6 +966,13 @@
             const statusClass = outfit.in_laundry ? 'status-laundry' : 'status-ready';
             newItem.className = `scroll-item filter-item outfit ${statusClass} season-${outfit.season} occasion-${outfit.occasion} color-${outfit.color}`;
             newItem.setAttribute('data-outfit-id', outfit.id);
+            newItem.setAttribute('data-top-id', outfit.top_id || '');
+            newItem.setAttribute('data-top-laundry', outfit.top_status === 'laundry' ? 'true' : '');
+            newItem.setAttribute('data-bottom-id', outfit.bottom_id || '');
+            newItem.setAttribute('data-bottom-laundry', outfit.bottom_status === 'laundry' ? 'true' : '');
+            newItem.setAttribute('data-shoes-id', outfit.shoes_id || '');
+            newItem.setAttribute('data-shoes-laundry', outfit.shoes_status === 'laundry' ? 'true' : '');
+            newItem.setAttribute('data-outfit-laundry', outfit.status === 'laundry' ? 'true' : '');
             
             let imagesHtml = '';
             let hasImages = false;
@@ -1160,6 +1152,25 @@
                         if (title) title.classList.remove('text-muted');
                     }
                     
+                    document.querySelectorAll('.filter-item.outfit').forEach(outfitCard => {
+                        if (outfitCard.getAttribute('data-top-id') == clothId) outfitCard.removeAttribute('data-top-laundry');
+                        if (outfitCard.getAttribute('data-bottom-id') == clothId) outfitCard.removeAttribute('data-bottom-laundry');
+                        if (outfitCard.getAttribute('data-shoes-id') == clothId) outfitCard.removeAttribute('data-shoes-laundry');
+                        
+                        if (!outfitCard.getAttribute('data-top-laundry') && 
+                            !outfitCard.getAttribute('data-bottom-laundry') && 
+                            !outfitCard.getAttribute('data-shoes-laundry') &&
+                            outfitCard.getAttribute('data-outfit-laundry') !== 'true') {
+                            
+                            outfitCard.classList.remove('status-laundry');
+                            outfitCard.classList.add('status-ready');
+                            const badge = outfitCard.querySelector('.badge.bg-danger');
+                            if(badge) badge.remove();
+                            const title = outfitCard.querySelector('.item-title');
+                            if(title) title.classList.remove('text-muted');
+                        }
+                    });
+                    
                     setTimeout(() => applyFilters(), 350);
                 } else {
                     alert(data.message);
@@ -1192,6 +1203,21 @@
                         const title = mCard.querySelector('.item-title');
                         if (img) img.style.opacity = '1';
                         if (title) title.classList.remove('text-muted');
+                    });
+                    
+                    document.querySelectorAll('.filter-item.outfit').forEach(outfitCard => {
+                        outfitCard.removeAttribute('data-top-laundry');
+                        outfitCard.removeAttribute('data-bottom-laundry');
+                        outfitCard.removeAttribute('data-shoes-laundry');
+                        
+                        if (outfitCard.getAttribute('data-outfit-laundry') !== 'true') {
+                            outfitCard.classList.remove('status-laundry');
+                            outfitCard.classList.add('status-ready');
+                            const badge = outfitCard.querySelector('.badge.bg-danger');
+                            if(badge) badge.remove();
+                            const title = outfitCard.querySelector('.item-title');
+                            if(title) title.classList.remove('text-muted');
+                        }
                     });
                     
                     document.getElementById('laundryEmptyMsg').style.display = 'block';

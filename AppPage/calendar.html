@@ -62,6 +62,7 @@
         }
         .btn-plan-fit:hover { background-color: #333; }
 
+        .warning-laundry { opacity: 0.6; border: 2px solid #dc3545 !important; background-color: #fff5f5; }
         .filled-slot { 
             border: 1px solid #eee; border-radius: 8px; flex-grow: 1; 
             display: flex; flex-direction: column; overflow: hidden; position: relative;
@@ -428,16 +429,37 @@
                     slotWrapper.appendChild(filled);
                     slotWrapper.appendChild(nameTag);
 
-                    // Wear/Laundry button
+                    // Contextual Wear/Laundry button
                     const actionDiv = document.createElement('div');
                     actionDiv.className = 'mt-auto pt-2';
                     actionDiv.onclick = (e) => e.stopPropagation();
-                    if (schedule.is_worn == 1) {
-                        actionDiv.innerHTML = `<button class="btn btn-sm btn-secondary w-100 fw-bold disabled" style="font-size:0.75rem;"><i class="bi bi-check2-all me-1"></i>In Laundry</button>`;
-                    } else if (schedule.in_laundry) {
-                        actionDiv.innerHTML = `<button class="btn btn-sm w-100 fw-bold disabled" style="font-size:0.75rem; background-color: #ffc107; color: #000; border: none; opacity: 1;"><i class="bi bi-exclamation-triangle-fill me-1"></i>In Laundry</button>`;
+                    
+                    const now = new Date();
+                    now.setHours(0,0,0,0);
+                    
+                    if (d < now) {
+                        // Past Date -> Worn/Completed
+                        actionDiv.innerHTML = `<button class="btn btn-sm btn-outline-secondary w-100 fw-bold disabled" style="font-size:0.75rem; border:none; opacity:1;"><i class="bi bi-clock-history me-1"></i>Worn</button>`;
+                    } else if (d > now) {
+                        // Future Date -> Upcoming or Laundry Warning
+                        if (schedule.in_laundry) {
+                            actionDiv.innerHTML = `<button class="btn btn-sm w-100 fw-bold disabled" style="font-size:0.75rem; background-color: #ffc107; color: #000; border: none; opacity: 1;"><i class="bi bi-exclamation-triangle-fill me-1"></i>⚠️ In Laundry</button>`;
+                        } else {
+                            actionDiv.innerHTML = `<button class="btn btn-sm btn-outline-primary w-100 fw-bold disabled" style="font-size:0.75rem;"><i class="bi bi-calendar-event me-1"></i>Upcoming</button>`;
+                        }
                     } else {
-                        actionDiv.innerHTML = `<button class="btn btn-sm btn-outline-success w-100 fw-bold" style="font-size:0.75rem;" data-schedule-id="${schedule.id}" onclick="handleOutfitAction(this, 'wear')"><i class="bi bi-check-circle me-1"></i>Wear</button>`;
+                        // Today
+                        if (schedule.is_worn == 1) {
+                            actionDiv.innerHTML = `
+                                <div class="d-flex flex-column gap-1">
+                                    <span class="text-success fw-bold text-center" style="font-size:0.7rem;"><i class="bi bi-check-circle-fill"></i> Finished wearing!</span>
+                                    <button class="btn btn-sm btn-outline-danger w-100 fw-bold" style="font-size:0.7rem; padding: 2px 5px;" data-schedule-id="${schedule.id}" onclick="undoOutfitAction(this)">Undo</button>
+                                </div>`;
+                        } else if (schedule.in_laundry) {
+                             actionDiv.innerHTML = `<button class="btn btn-sm w-100 fw-bold disabled" style="font-size:0.75rem; background-color: #ffc107; color: #000; border: none; opacity: 1;"><i class="bi bi-exclamation-triangle-fill me-1"></i>In Laundry</button>`;
+                        } else {
+                            actionDiv.innerHTML = `<button class="btn btn-sm btn-outline-success w-100 fw-bold" style="font-size:0.75rem;" data-schedule-id="${schedule.id}" data-date="${schedule.scheduled_date}" onclick="handleOutfitAction(this, 'wear')"><i class="bi bi-check-circle me-1"></i>Wear</button>`;
+                        }
                     }
                     slotWrapper.appendChild(actionDiv);
                 } else {
@@ -669,47 +691,33 @@
         // ===== WEAR / LAUNDRY BUTTON =====
         function handleOutfitAction(btn, action) {
             const scheduleId = btn.getAttribute('data-schedule-id');
+            const schedDate = btn.getAttribute('data-date'); // Added for recurring logic
             if (!scheduleId) return;
 
             btn.disabled = true;
 
             if (action === 'wear') {
-                // First call: mark as worn
+                // Confirm moving to laundry
+                if (!confirm("Mark these items as 'In Laundry'?")) {
+                    btn.disabled = false;
+                    return;
+                }
+
                 const formData = new FormData();
                 formData.append('schedule_id', scheduleId);
-                formData.append('action', 'wear');
-
-                fetch('wear_outfit.php', { method: 'POST', body: formData })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.status === 200) {
-                        btn.className = 'btn btn-sm btn-outline-danger w-100 fw-bold';
-                        btn.style.fontSize = '0.75rem';
-                        btn.innerHTML = '<i class="bi bi-basket me-1"></i>Laundry';
-                        btn.disabled = false;
-                        btn.setAttribute('onclick', "handleOutfitAction(this, 'laundry')");
-                    } else {
-                        alert(data.message);
-                        btn.disabled = false;
-                    }
-                })
-                .catch(err => { console.error(err); alert('Network error.'); btn.disabled = false; });
-
-            } else if (action === 'laundry') {
-                // Second call: send to laundry — marks all clothes in outfit as 'laundry'
-                const formData = new FormData();
-                formData.append('schedule_id', scheduleId);
+                formData.append('scheduled_date', schedDate);
                 formData.append('action', 'laundry');
 
                 fetch('wear_outfit.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 200) {
-                        btn.className = 'btn btn-sm btn-secondary w-100 fw-bold disabled';
-                        btn.style.fontSize = '0.75rem';
-                        btn.innerHTML = '<i class="bi bi-check2-all me-1"></i>In Laundry';
-                        btn.onclick = null;
-                        btn.removeAttribute('onclick');
+                        const actionDiv = btn.parentElement;
+                        actionDiv.innerHTML = `
+                            <div class="d-flex flex-column gap-1">
+                                <span class="text-success fw-bold text-center" style="font-size:0.7rem;"><i class="bi bi-check-circle-fill"></i> Finished wearing!</span>
+                                <button class="btn btn-sm btn-outline-danger w-100 fw-bold" style="font-size:0.7rem; padding: 2px 5px;" data-schedule-id="${scheduleId}" onclick="undoOutfitAction(this)">Undo</button>
+                            </div>`;
                     } else {
                         alert(data.message);
                         btn.disabled = false;
@@ -717,6 +725,30 @@
                 })
                 .catch(err => { console.error(err); alert('Network error.'); btn.disabled = false; });
             }
+        }
+
+        function undoOutfitAction(btn) {
+            const scheduleId = btn.getAttribute('data-schedule-id');
+            if (!scheduleId) return;
+
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('schedule_id', scheduleId);
+            formData.append('action', 'undo');
+
+            fetch('wear_outfit.php', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 200) {
+                    renderWeekView(); // Re-render to show original Wear button
+                    if (document.getElementById('month-view').style.display === 'block') renderMonthView();
+                } else {
+                    alert(data.message);
+                    btn.disabled = false;
+                }
+            })
+            .catch(err => { console.error(err); alert('Network error.'); btn.disabled = false; });
         }
 
         // ===== INIT =====

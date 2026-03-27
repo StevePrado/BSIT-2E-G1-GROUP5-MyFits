@@ -1,6 +1,7 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "myfits_db");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+require_once "db_connect.php";
+// $conn is now available from db_connect.php
+if (!$conn) die("Connection failed.");
 
 $result = $conn->query("SHOW CREATE TABLE outfits");
 $row = $result->fetch_assoc();

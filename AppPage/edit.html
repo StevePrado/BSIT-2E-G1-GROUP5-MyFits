@@ -369,13 +369,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group list-group-flush option-list" data-target="val-occasion">
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium active"><span class="fs-5 me-2">🌍</span> Any Occasion</button>
                         <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">💼</span> Work</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🎒</span> School</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">❤️</span> Date</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👕</span> Casual</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">⚽</span> Sports</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👔</span> Formal Event</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🏠</span> At Home</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">☕</span> Casual</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👔</span> Formal</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🎉</span> Party</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">💪</span> Gym</button>
                     </div>
                 </div>
             </div>
@@ -510,7 +509,8 @@
                 var occasion = $('#val-occasion').text();
                 var color = $('#val-color').text();
                 var scheduleDate = $('#scheduleDateInput').val();
-                let displayDate = scheduleDate ? scheduleDate : 'Unscheduled';
+                var repeatWeekly = $('#repeatWeeklyToggle').is(':checked');
+                let displayDate = scheduleDate ? scheduleDate + (repeatWeekly ? ' (Weekly)' : '') : 'Unscheduled';
 
                 $('#previewInfo').html(
                     '<h5 class="fw-bold mb-3">' + outfitName + '</h5>' +
@@ -531,11 +531,20 @@
                 let bottomId = $('#slot-bottom .equipped-img').data('id') || null;
                 let shoesId = $('#slot-shoes .equipped-img').data('id') || null;
                 let name = $('.name-input').val().trim() || 'Untitled Outfit';
-                let season = $('#val-season').text().trim();
-                let occasion = $('#val-occasion').text().trim();
-                let color = $('#val-color').text().trim();
+                let rawStatus = $('#val-status').text().trim();
+                let status = rawStatus === 'In Laundry' ? 'laundry' : 'ready';
                 
-                let outfitData = { top_id: topId, bottom_id: bottomId, shoes_id: shoesId, name: name, season: season, occasion: occasion, color: color };
+                let rawSeason = $('#val-season').text().trim();
+                let season = rawSeason === 'Any Season' ? 'all-season' : rawSeason.toLowerCase();
+                
+                let rawOccasion = $('#val-occasion').text().trim();
+                let occasion = rawOccasion === 'Any Occasion' ? 'any-occasion' : rawOccasion.toLowerCase();
+                
+                let color = $('#val-color').text().trim().toLowerCase();
+                let scheduleDate = $('#scheduleDateInput').val() || null;
+                let repeatWeekly = $('#repeatWeeklyToggle').is(':checked') ? 1 : 0;
+                
+                let outfitData = { top_id: topId, bottom_id: bottomId, shoes_id: shoesId, name: name, season: season, occasion: occasion, color: color, status: status, scheduleDate: scheduleDate, repeatWeekly: repeatWeekly };
                 
                 let btn = $(this);
                 btn.text('Updating...').prop('disabled', true);
@@ -614,8 +623,8 @@
                     let $el = $(this);
                     
                     let matchStatus = checkedTypes.status.length === 0 || checkedTypes.status.some(c => $el.hasClass(c) || (c === 'status-ready' && !$el.hasClass('status-laundry')));
-                    let matchSeason = checkedTypes.season.length === 0 || checkedTypes.season.some(c => $el.hasClass(c));
-                    let matchOccasion = checkedTypes.occasion.length === 0 || checkedTypes.occasion.some(c => $el.hasClass(c));
+                    let matchSeason = checkedTypes.season.length === 0 || checkedTypes.season.some(c => $el.hasClass(c) || $el.hasClass('season-all-season'));
+                    let matchOccasion = checkedTypes.occasion.length === 0 || checkedTypes.occasion.some(c => $el.hasClass(c) || $el.hasClass('occasion-any-occasion'));
                     let matchColor = checkedTypes.color.length === 0 || checkedTypes.color.some(c => $el.hasClass(c));
                     
                     let itemName = $el.data('name').toLowerCase();

@@ -18,14 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $season = isset($_POST['season']) ? $_POST['season'] : '';
     $occasion = isset($_POST['occasion']) ? $_POST['occasion'] : '';
     $color = isset($_POST['color']) ? $_POST['color'] : '';
+    $status = isset($_POST['status']) ? $_POST['status'] : 'ready';
 
     if (!$cloth_id || !$name) {
         echo json_encode(["status" => 400, "message" => "Missing required fields."]);
         exit();
     }
 
-    $stmt = $conn->prepare("UPDATE clothes SET name=?, category=?, season=?, occasion=?, color=? WHERE id=? AND user_id=?");
-    $stmt->bind_param("sssssii", $name, $category, $season, $occasion, $color, $cloth_id, $user_id);
+    $stmt = $conn->prepare("UPDATE clothes SET name=?, category=?, season=?, occasion=?, color=?, status=? WHERE id=? AND user_id=?");
+    $stmt->bind_param("ssssssii", $name, $category, $season, $occasion, $color, $status, $cloth_id, $user_id);
 
     if ($stmt->execute()) {
         echo json_encode(["status" => 200, "message" => "Clothing item updated."]);

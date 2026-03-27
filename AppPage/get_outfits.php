@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 $query = "SELECT 
-    o.id, o.name, o.season, o.occasion, o.color, 
+    o.id, o.name, o.season, o.occasion, o.color, o.status,
     o.top_id, o.bottom_id, o.shoes_id,
     t.image as top_image, t.status as top_status,
     b.image as bottom_image, b.status as bottom_status,
@@ -31,7 +31,7 @@ $result = $stmt->get_result();
 
 $outfits = [];
 while ($row = $result->fetch_assoc()) {
-    $row['in_laundry'] = ($row['top_status'] === 'laundry' || $row['bottom_status'] === 'laundry' || $row['shoes_status'] === 'laundry');
+    $row['in_laundry'] = ($row['top_status'] === 'laundry' || $row['bottom_status'] === 'laundry' || $row['shoes_status'] === 'laundry' || $row['status'] === 'laundry');
     $outfits[] = $row;
 }
 

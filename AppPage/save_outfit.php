@@ -24,18 +24,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season = !empty($data->season) ? $data->season : null;
         $occasion = !empty($data->occasion) ? $data->occasion : null;
         $color = !empty($data->color) ? $data->color : null;
+        $status = !empty($data->status) ? $data->status : 'ready';
         
         if ($id) {
-            $stmt = $conn->prepare("UPDATE outfits SET name=?, top_id=?, bottom_id=?, shoes_id=?, season=?, occasion=?, color=? WHERE id=? AND user_id=?");
-            $stmt->bind_param("siiisssii", $name, $top_id, $bottom_id, $shoes_id, $season, $occasion, $color, $id, $user_id);
+            $stmt = $conn->prepare("UPDATE outfits SET name=?, top_id=?, bottom_id=?, shoes_id=?, season=?, occasion=?, color=?, status=? WHERE id=? AND user_id=?");
+            $stmt->bind_param("siiissssii", $name, $top_id, $bottom_id, $shoes_id, $season, $occasion, $color, $status, $id, $user_id);
             $msg = "Outfit updated successfully!";
         } else {
-            $stmt = $conn->prepare("INSERT INTO outfits (user_id, name, top_id, bottom_id, shoes_id, season, occasion, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("isiiisss", $user_id, $name, $top_id, $bottom_id, $shoes_id, $season, $occasion, $color);
+            $stmt = $conn->prepare("INSERT INTO outfits (user_id, name, top_id, bottom_id, shoes_id, season, occasion, color, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isiiissss", $user_id, $name, $top_id, $bottom_id, $shoes_id, $season, $occasion, $color, $status);
             $msg = "Outfit saved successfully!";
         }
 
         if ($stmt->execute()) {
+            if (!$id) {
+                $id = $conn->insert_id;
+            }
+            if (!empty($data->scheduleDate)) {
+                $scheduleDate = $data->scheduleDate;
+                $repeatWeekly = !empty($data->repeatWeekly) ? 1 : 0;
+                $recurrence_day = $repeatWeekly ? date('l', strtotime($scheduleDate)) : null;
+
+                // Insert/Update the primary schedule entry (Single Row)
+                $schedStmt = $conn->prepare("INSERT INTO schedule (user_id, outfit_id, scheduled_date, is_recurring, recurrence_day) 
+                                           VALUES (?, ?, ?, ?, ?) 
+                                           ON DUPLICATE KEY UPDATE 
+                                           scheduled_date=VALUES(scheduled_date), 
+                                           is_recurring=VALUES(is_recurring), 
+                                           recurrence_day=VALUES(recurrence_day)");
+                
+                if ($schedStmt) {
+                    $schedStmt->bind_param("iisis", $user_id, $id, $scheduleDate, $repeatWeekly, $recurrence_day);
+                    $schedStmt->execute();
+                    $schedStmt->close();
+                }
+            }
+
             echo json_encode(["status" => 200, "message" => $msg]);
         } else {
             echo json_encode(["status" => 500, "message" => "Database error: " . $conn->error]);
