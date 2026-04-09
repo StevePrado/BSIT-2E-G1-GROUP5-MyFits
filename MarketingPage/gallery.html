@@ -8,111 +8,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #fff; overflow-x: hidden; }
-
-        .navbar-brand { font-weight: 900; font-size: 1.5rem; letter-spacing: -1px; }
-        .nav-link { color: #000 !important; font-weight: 500; margin: 0 10px; transition: color 0.3s ease; }
-        .nav-link:hover { color: #555 !important; }
-        .btn-black { 
-            background-color: #000; color: #fff; border-radius: 0; 
-            padding: 8px 25px; font-weight: 600; border: 2px solid #000;
-        }
-        .btn-black:hover { background-color: #333; border-color: #333; color: #fff; }
-
-        .filter-sidebar { 
-            padding-right: 20px; 
-            position: sticky;
-            top: 100px;
-            height: calc(100vh - 100px);
-            overflow-y: auto;
-        }
-        .filter-sidebar::-webkit-scrollbar { width: 4px; }
-        .filter-sidebar::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
-
-        .filter-title { font-weight: 700; font-size: 0.9rem; text-transform: uppercase; margin-top: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; cursor: pointer; }
-        .form-check-label { font-size: 0.9rem; color: #333; }
-        .form-check-input:checked { background-color: #000; border-color: #000; }
- 
-        .gallery-wrapper {
-            background-color: #e9ecef; 
-            min-height: 100vh;
-            position: relative;
-            padding: 30px 30px 30px 80px; 
-            border-left: 1px solid #ddd;
-        }
-
-        .watermark-text {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 60px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            z-index: 0
-            ;
-        }
-        .watermark-inner {
-            font-size: 5rem;
-            font-weight: 900;
-            color: #fff;
-            white-space: nowrap;
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            opacity: 1; 
-            letter-spacing: 5px;
-            position: fixed; 
-            top: 50%;
-            left: 15px; 
-            transform: translateY(-50%) rotate(180deg);
-        }
-
-        .search-pill { border-radius: 50px; border: 1px solid #000; padding: 5px 15px; }
-        .filter-pill {
-            border-radius: 50px; padding: 5px 25px; font-size: 0.85rem; font-weight: 600;
-            border: 1px solid #aaa; background: transparent; color: #555; margin-right: 5px;
-            text-decoration: none; display: inline-block; transition: all 0.3s;
-        }
-        .filter-pill.active, .filter-pill:hover { background: #000; color: #fff; border-color: #000; }
-
-        .section-title { font-weight: 800; font-size: 1rem; margin-top: 30px; margin-bottom: 15px; text-transform: uppercase; }
-        
-        .scroll-row {
-            display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 1.2rem; padding-bottom: 15px; scrollbar-width: thin; 
-        }
-        .scroll-row::-webkit-scrollbar { height: 6px; }
-        .scroll-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-        
-        .scroll-item { width: 220px; flex-shrink: 0; }
-        .scroll-item.outfit { width: 250px; }
-        .scroll-item.outfit .item-img { height: 280px; }
-        .scroll-item.bottom { width: 250px; }
-        .scroll-item.bottom .item-img { height: 280px; }
-        .scroll-item.shoes { width: 280px; }
-        .scroll-item.shoes .item-img { height: 200px; }
-        
-        .item-card {
-            background: #fff; border: none; border-radius: 8px; padding: 15px; text-align: center; transition: transform 0.2s; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            position: relative;
-        }
-        .item-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border: 1px solid #000; }
-        .item-img { width: 100%; height: 220px; object-fit: contain; }
-        .item-title { font-weight: 800; font-size: 0.8rem; text-transform: uppercase; margin-top: 15px; color: #000; }
-
-        footer { background-color: #000; color: #fff; padding: 60px 0; }
-        .footer-input { border-radius: 0; border: none; padding: 12px; width: 100%; }
-        .footer-link {
-            text-decoration: none; color: #999; margin-bottom: 12px; display: inline-block; transition: all 0.3s ease; font-size: 0.9rem;
-        }
-        .footer-link:hover { color: #ffffff; padding-left: 5px; }
-    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+
+    <!-- Navigation bar -->
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
         <div class="container">
@@ -136,162 +38,148 @@
         </div>
     </nav>
 
-    <div class="container-fluid" style="margin-top: 88px;">
-        <div class="row">
-            
-            <div class="col-md-2 d-none d-md-block filter-sidebar ps-4 pt-4 border-end">
-                <h5 class="fw-bold mb-4">Filters</h5>
+    <div class="container-fluid main-container" style="margin-top: 0; padding-top: 8px;">
+        <div class="row g-4">
 
+            <!-- Filters -->
+            <div class="col-xl-2 col-lg-3 d-none d-lg-block filter-sidebar pe-3">
+                <h5 class="fw-bold mb-4 mt-2">Filters</h5>
+                
                 <div class="mb-4">
-                    <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#statusCollapse" aria-expanded="true">
-                        Status <i class="bi bi-chevron-down"></i>
-                    </div>
-                    <div class="collapse show" id="statusCollapse">
-                        <div class="form-check mt-2">
-                            <input class="form-check-input filter-checkbox" type="checkbox" id="filter-status-availability" onchange="applyFilters()">
-                            <label class="form-check-label">Availability (10)</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input filter-checkbox" type="checkbox" id="filter-status-laundry" onchange="applyFilters()">
-                            <label class="form-check-label">In Laundry (12)</label>
-                        </div>
-                    </div>
+                    <div class="filter-title">Status <i class="bi bi-chevron-down"></i></div>
+                    <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" data-type="status" data-val="status-ready"><label class="form-check-label">Ready to Wear</label></div>
+                    <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" data-type="status" data-val="status-laundry"><label class="form-check-label">In Laundry</label></div>
                 </div>
 
                 <div class="mb-4">
-                    <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#seasonCollapse" aria-expanded="false">
-                        Season <i class="bi bi-chevron-down"></i>
-                    </div>
-                    <div class="collapse show" id="seasonCollapse">
-                        <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-season-spring" onchange="applyFilters()"><label class="form-check-label">Spring</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-season-summer" onchange="applyFilters()"><label class="form-check-label">Summer</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-season-fall" onchange="applyFilters()"><label class="form-check-label">Fall</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-season-winter" onchange="applyFilters()"><label class="form-check-label">Winter</label></div>
-                    </div>
+                    <div class="filter-title">Season <i class="bi bi-chevron-down"></i></div>
+                    <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" data-type="season" data-val="season-spring"><label class="form-check-label">Spring</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="season" data-val="season-summer"><label class="form-check-label">Summer</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="season" data-val="season-fall"><label class="form-check-label">Fall</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="season" data-val="season-winter"><label class="form-check-label">Winter</label></div>
                 </div>
 
                 <div class="mb-4">
-                    <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#occasionsCollapse" aria-expanded="false">
-                        Occasions <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="collapse show" id="occasionsCollapse">
-                        <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-work" onchange="applyFilters()"><label class="form-check-label">Work</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-casual" onchange="applyFilters()"><label class="form-check-label">Casual</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-date" onchange="applyFilters()"><label class="form-check-label">Date</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-sports" onchange="applyFilters()"><label class="form-check-label">Sports</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-formal" onchange="applyFilters()"><label class="form-check-label">Formal Event</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-occasion-home" onchange="applyFilters()"><label class="form-check-label">At Home</label></div>
-                    </div>
+                    <div class="filter-title">Occasions <i class="bi bi-chevron-right"></i></div>
+                    <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-work"><label class="form-check-label">Work</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-casual"><label class="form-check-label">Casual</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-date"><label class="form-check-label">Date</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-sports"><label class="form-check-label">Sports</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-formal"><label class="form-check-label">Formal Event</label></div>
                 </div>
 
                 <div class="mb-4">
-                    <div class="filter-title" data-bs-toggle="collapse" data-bs-target="#colorsCollapse" aria-expanded="false">
-                        Colors <i class="bi bi-chevron-right"></i>
+                    <div class="filter-title">Colors <i class="bi bi-chevron-right"></i></div>
+                    <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" data-type="color" data-val="color-black"><label class="form-check-label">Black</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="color" data-val="color-white"><label class="form-check-label">White</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="color" data-val="color-blue"><label class="form-check-label">Blue</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="color" data-val="color-gray"><label class="form-check-label">Gray</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="color" data-val="color-brown"><label class="form-check-label">Brown</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="color" data-val="color-red"><label class="form-check-label">Red</label></div>
+                </div>
+            </div>
+
+            <!-- Clothing catalogue -->
+            <div class="col-xl-6 col-lg-4 catalogue-wrapper">
+                
+                <div class="catalogue-header mb-4 mt-2 d-flex align-items-center">
+                    Clothing Catalogue 
+                    <span class="drag-me-text ms-3 bg-black text-white px-2 py-1 rounded small fw-bold">DEMO MODE</span> 
+                    <span class="text-muted ms-2 small fw-bold">CLICK TO EQUIP!</span>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-4 gap-3">
+                    <div class="d-flex flex-wrap gap-2" id="categoryFilters">
+                        <button class="filter-pill active m-0" data-filter="all">All</button>
+                        <button class="filter-pill m-0" data-filter="top">Tops</button>
+                        <button class="filter-pill m-0" data-filter="bottom">Bottoms</button>
+                        <button class="filter-pill m-0" data-filter="shoes">Shoes</button>
                     </div>
-                    <div class="collapse show" id="colorsCollapse">
-                        <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-black" onchange="applyFilters()"><label class="form-check-label">Black</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-white" onchange="applyFilters()"><label class="form-check-label">White</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-blue" onchange="applyFilters()"><label class="form-check-label">Blue</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-gray" onchange="applyFilters()"><label class="form-check-label">Gray</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-brown" onchange="applyFilters()"><label class="form-check-label">Brown</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-red" onchange="applyFilters()"><label class="form-check-label">Red</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-green" onchange="applyFilters()"><label class="form-check-label">Green</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-khaki" onchange="applyFilters()"><label class="form-check-label">Khaki</label></div>
-                        <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-color-yellow" onchange="applyFilters()"><label class="form-check-label">Yellow</label></div>
+                    <div class="input-group" style="max-width: 250px;">
+                        <span class="input-group-text bg-white border-dark rounded-start-pill border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-dark border-start-0 rounded-end-pill px-2" placeholder="Search clothes...">
+                    </div>
+                </div>
+
+                <div class="items-container bg-white p-4 rounded-4 shadow-sm border border-light">
+                    <h6 class="section-title mt-0" data-category="top">Tops</h6>
+                    <div class="scroll-row item-group" data-category="top" id="topsRow">
+                    </div>
+
+                    <h6 class="section-title border-top pt-4" data-category="bottom">Bottoms</h6>
+                    <div class="scroll-row item-group" data-category="bottom" id="bottomsRow">
+                    </div>
+
+                    <h6 class="section-title border-top pt-4" data-category="shoes">Shoes</h6>
+                    <div class="scroll-row item-group mb-0" data-category="shoes" id="shoesRow">
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-10 p-0">
-                <div class="gallery-wrapper">
-                    
-                    <div class="watermark-text">
-                       
+            <!-- Outfit canvas -->
+            <div class="col-xl-4 col-lg-5 canvas-wrapper border-0" style="background: transparent; box-shadow: none;">
+                
+                <h5 class="canvas-title fw-bold">Outfit Canvas</h5>
+                
+                <div class="outfit-canvas-area bg-white rounded-4 shadow-sm border border-light p-3" id="outfit-canvas">
+                    <div class="canvas-slot canvas-slot-top" id="slot-top">
+                        <div class="placeholder-text"><i class="bi bi-person-fill-up"></i>Top</div>
                     </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="d-flex align-items-center w-100 me-3">
-                             <label class="me-2 fw-bold">Search</label>
-                             <div class="input-group">
-                                <span class="input-group-text bg-white border-dark rounded-start-pill border-end-0"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control border-dark border-start-0 rounded-end-pill" placeholder="">
-                            </div>
-                        </div>
-                        <div class="dropdown flex-shrink-0">
-                            <button class="btn btn-outline-dark dropdown-toggle rounded-0 w-100 d-flex justify-content-between align-items-center px-3" type="button" data-bs-toggle="dropdown" style="min-width: 180px;">
-                                <span>Sort By: Date Added</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Newest</a></li>
-                                <li><a class="dropdown-item" href="#">Oldest</a></li>
-                            </ul>
-                        </div>
+                    <div class="canvas-slot canvas-slot-bottom" id="slot-bottom">
+                        <div class="placeholder-text"><i class="bi bi-person-fill-down"></i>Bottom</div>
                     </div>
-
-                    <div class="mb-4 position-relative" style="z-index: 2;">
-                        <button class="filter-pill active bg-black text-white" onclick="filterCategory('all', this)">All</button>
-                        <button class="filter-pill" onclick="filterCategory('outfit', this)">Outfits</button>
-                        <button class="filter-pill" onclick="filterCategory('top', this)">Tops</button>
-                        <button class="filter-pill" onclick="filterCategory('bottom', this)">Bottoms</button>
-                        <button class="filter-pill" onclick="filterCategory('shoes', this)">Shoes</button>
+                    <div class="canvas-slot canvas-slot-shoes" id="slot-shoes">
+                        <div class="placeholder-text"><i class="bi bi-person-walking"></i>Shoes</div>
                     </div>
-
-                    <h6 class="section-title">Saved Outfits</h6>
-                    <div class="scroll-row mb-4 filter-grid" id="outfitGrid">
-                        <div class="scroll-item filter-item outfit status-availability season-spring occasion-work color-black">
-                             <div class="item-card"><img src="../images/Outfit1.jpg" class="item-img"><div class="item-title">School Fit 1</div></div>
-                        </div>
-                        <div class="scroll-item filter-item outfit status-laundry season-fall occasion-casual color-gray">
-                             <div class="item-card">
-                                 <span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>
-                                 <img src="../images/Outfit2.jpg" class="item-img"><div class="item-title text-muted">Weekend Casual</div>
-                             </div>
-                        </div>
-                        <div class="scroll-item filter-item outfit status-availability season-summer occasion-date color-red">
-                             <div class="item-card"><img src="../images/Outfit1.jpg" class="item-img"><div class="item-title">Date Night</div></div>
-                        </div>
-                    </div>
-
-                    <h6 class="section-title">Tops</h6>
-                    <div class="scroll-row mb-4 filter-grid" id="topGrid">
-                        <div class="scroll-item filter-item top status-availability season-fall occasion-casual color-black"><div class="item-card"><img src="../images/Shirt1.jpg" class="item-img"><div class="item-title">Black Sweater</div></div></div>
-                        <div class="scroll-item filter-item top status-laundry season-summer occasion-casual color-white">
-                            <div class="item-card">
-                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>
-                                <img src="../images/Shirt2.jpg" class="item-img"><div class="item-title text-muted">Graphic Tee</div>
-                            </div>
-                        </div>
-                        <div class="scroll-item filter-item top status-availability season-spring occasion-work color-white"><div class="item-card"><img src="../images/Shirt1.jpg" class="item-img"><div class="item-title">White Polo</div></div></div>
-                    </div>
-
-                     <h6 class="section-title">Bottoms</h6>
-                     <div class="scroll-row mb-4 filter-grid" id="bottomGrid">
-                         <div class="scroll-item filter-item bottom status-availability season-spring occasion-casual color-blue"><div class="item-card"><img src="../images/Pants1.jpg" class="item-img"><div class="item-title">Blue Denim</div></div></div>
-                         <div class="scroll-item filter-item bottom status-availability season-fall occasion-work color-black"><div class="item-card"><img src="../images/Pants2.jpg" class="item-img"><div class="item-title">Black Trousers</div></div></div>
-                         <div class="scroll-item filter-item bottom status-laundry season-summer occasion-sports color-khaki">
-                             <div class="item-card">
-                                 <span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>
-                                 <img src="../images/Pants1.jpg" class="item-img"><div class="item-title text-muted">Cargo Shorts</div>
-                             </div>
-                         </div>
-                     </div>
-                     
-                     <h6 class="section-title">Shoes</h6>
-                     <div class="scroll-row mb-4 filter-grid" id="shoesGrid">
-                         <div class="scroll-item filter-item shoes status-availability season-spring occasion-casual color-white"><div class="item-card"><img src="../images/Shoes1.jpg" class="item-img"><div class="item-title">White Sneakers</div></div></div>
-                         <div class="scroll-item filter-item shoes status-availability season-fall occasion-work color-black"><div class="item-card"><img src="../images/Shoes2.jpg" class="item-img"><div class="item-title">Black Boots</div></div></div>
-                          <div class="scroll-item filter-item shoes status-availability season-summer occasion-sports color-blue"><div class="item-card"><img src="../images/Shoes1.jpg" class="item-img"><div class="item-title">Running Shoes</div></div></div>
-                     </div>
-
                 </div>
+
+                <button class="btn-randomize mt-3 bg-white w-100 rounded-pill py-2 border shadow-sm fw-bold" id="btn-randomize" style="transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='#fff'">
+                    <i class="bi bi-shuffle me-2"></i> Randomize Outfit
+                </button>
+
+                <div class="edit-panel mt-3 p-4 rounded-4 text-white" style="background-color: #1a1a1a;">
+                    <div class="mb-3">
+                        <h4 class="fw-bold m-0" style="color: #fff;">My Demo Fit</h4>
+                    </div>
+                    
+                    <ul class="tag-list mb-3 p-0" style="list-style: none;">
+                        <li class="tag-item mt-3 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-2">
+                            <div><span class="fs-6 text-secondary me-2">Status</span></div>
+                            <div><span id="val-status" class="fw-medium text-white">Available</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
+                        </li>
+                        <li class="tag-item mt-3 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-2">
+                            <div><span class="fs-6 text-secondary me-2">Season</span></div>
+                            <div><span id="val-season" class="fw-medium text-white">Any Season</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
+                        </li>
+                        <li class="tag-item mt-3 d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-25 pb-2">
+                            <div><span class="fs-6 text-secondary me-2">Occasion</span></div>
+                            <div><span id="val-occasion" class="fw-medium text-white">Date Night</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
+                        </li>
+                        <li class="tag-item mt-3 d-flex justify-content-between align-items-center">
+                            <div><span class="fs-6 text-secondary me-2">Color</span></div>
+                            <div><span id="val-color" class="fw-medium text-white">Black</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex flex-column gap-2 mt-4">
+                        <button class="btn btn-outline-light w-100 py-3 mt-4 rounded-3 fw-bold bg-white text-dark" onclick="$('#ctaModal').modal('show')">
+                            Schedule outfit <i class="bi bi-calendar-event ms-2 fs-5"></i>
+                        </button>
+                        <button class="btn btn-light w-100 py-3 mt-2 rounded-3 fw-bold text-uppercase d-flex align-items-center justify-content-center" onclick="$('#ctaModal').modal('show')" style="letter-spacing: 1px;">
+                            Save Outfit <i class="bi bi-cloud-arrow-up ms-2 fs-5"></i>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <footer class="bg-black text-white py-5">
+    <!-- Footer section -->
+
+    <footer>
         <div class="container">
             <div class="row">
-                
                 <div class="col-md-4 mb-4">
                     <h4 class="fw-bold mb-3">MY FiTS</h4>
                     <p class="small text-secondary mb-4">Your Digital Closet Twin.</p>
@@ -300,14 +188,12 @@
                         <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
                     </div>
                 </div>
-
                 <div class="col-md-4 mb-4">
                     <h6 class="fw-bold mb-4 text-uppercase">Subscribe to our Newsletter</h6>
                     <div class="input-group">
                         <input type="email" class="footer-input" placeholder="Enter Email...">
                     </div>
                 </div>
-
                 <div class="col-md-4 ps-lg-5">
                     <h6 class="fw-bold mb-4 text-uppercase">Quick Links</h6>
                     <div class="d-flex flex-column">
@@ -318,158 +204,31 @@
                         <a href="contact.html" class="footer-link">Contacts</a>
                     </div>
                 </div>
-
             </div>
-
-            <div class="text-center mt-5 pt-3 text-secondary small">
+            <div class="text-center mt-5 pt-3 text-secondary small border-top border-secondary border-opacity-25">
                 &copy; 2026 MY FiTS Project. BSIT-2E.
             </div>
         </div>
     </footer>
 
+    <!-- Cta modal -->
+    <div class="modal fade" id="ctaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow-lg text-center p-4">
+                <div class="modal-body">
+                    <i class="bi bi-calendar-heart fs-1 text-danger mb-3 d-inline-block"></i>
+                    <h4 class="fw-bold mb-3">Love this look?</h4>
+                    <p class="text-muted mb-4">Create a free account to save this outfit, schedule it on your calendar, and manage your full closet.</p>
+                    <a href="signup.html" class="btn btn-black btn-lg w-100 fw-bold rounded-3">Create Free Account</a>
+                    <button class="btn btn-link text-secondary mt-2 text-decoration-none w-100" data-bs-dismiss="modal">Keep playing around</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        let currentCategory = 'all';
-
-        function filterCategory(category, buttonElement) {
-            currentCategory = category;
-
-            document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active', 'bg-black', 'text-white'));
-            buttonElement.classList.add('active', 'bg-black', 'text-white');
-
-            const titles = document.querySelectorAll('.section-title');
-            if (category === 'all') {
-                titles.forEach(t => t.style.display = 'block');
-            } else {
-                titles.forEach(t => t.style.display = 'none');
-            }
-
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const availNode = document.getElementById('filter-status-availability');
-            const readyNode = document.getElementById('filter-ready');
-            const ready = readyNode ? readyNode.checked : (availNode ? availNode.checked : false);
-            
-            const laundryNode = document.getElementById('filter-laundry');
-            const laundryStatNode = document.getElementById('filter-status-laundry');
-            const laundry = laundryNode ? laundryNode.checked : (laundryStatNode ? laundryStatNode.checked : false);
-            
-            const hasStatusChecked = ready || laundry;
-
-            const springNode = document.getElementById('filter-season-spring');
-            const spring = springNode ? springNode.checked : false;
-            const summerNode = document.getElementById('filter-season-summer');
-            const summer = summerNode ? summerNode.checked : false;
-            const fallNode = document.getElementById('filter-season-fall');
-            const fall = fallNode ? fallNode.checked : false;
-            const winterNode = document.getElementById('filter-season-winter');
-            const winter = winterNode ? winterNode.checked : false;
-            const hasSeasonChecked = spring || summer || fall || winter;
-
-            const workNode = document.getElementById('filter-occasion-work');
-            const work = workNode ? workNode.checked : false;
-            const casualNode = document.getElementById('filter-occasion-casual');
-            const casual = casualNode ? casualNode.checked : false;
-            const dateNode = document.getElementById('filter-occasion-date');
-            const date = dateNode ? dateNode.checked : false;
-            const sportsNode = document.getElementById('filter-occasion-sports');
-            const sports = sportsNode ? sportsNode.checked : false;
-            const formalNode = document.getElementById('filter-occasion-formal');
-            const formal = formalNode ? formalNode.checked : false;
-            const homeNode = document.getElementById('filter-occasion-home');
-            const home = homeNode ? homeNode.checked : false;
-            const hasOccasionChecked = work || casual || date || sports || formal || home;
-
-            const blackNode = document.getElementById('filter-color-black');
-            const black = blackNode ? blackNode.checked : false;
-            const whiteNode = document.getElementById('filter-color-white');
-            const white = whiteNode ? whiteNode.checked : false;
-            const blueNode = document.getElementById('filter-color-blue');
-            const blue = blueNode ? blueNode.checked : false;
-            const grayNode = document.getElementById('filter-color-gray');
-            const gray = grayNode ? grayNode.checked : false;
-            const brownNode = document.getElementById('filter-color-brown');
-            const brown = brownNode ? brownNode.checked : false;
-            const redNode = document.getElementById('filter-color-red');
-            const red = redNode ? redNode.checked : false;
-            const greenNode = document.getElementById('filter-color-green');
-            const green = greenNode ? greenNode.checked : false;
-            const khakiNode = document.getElementById('filter-color-khaki');
-            const khaki = khakiNode ? khakiNode.checked : false;
-            const yellowNode = document.getElementById('filter-color-yellow');
-            const yellow = yellowNode ? yellowNode.checked : false;
-            const hasColorChecked = black || white || blue || gray || brown || red || green || khaki || yellow;
-
-            const items = document.querySelectorAll('.filter-item');
-            
-            items.forEach(item => {
-                const matchCategory = (currentCategory === 'all' || item.classList.contains(currentCategory));
-
-                let matchStatus = !hasStatusChecked;
-                if (hasStatusChecked) {
-                    if (ready && (item.classList.contains('status-ready') || item.classList.contains('status-availability'))) matchStatus = true;
-                    if (laundry && item.classList.contains('status-laundry')) matchStatus = true;
-                }
-
-                let matchSeason = !hasSeasonChecked;
-                if (hasSeasonChecked) {
-                    if (spring && item.classList.contains('season-spring')) matchSeason = true;
-                    if (summer && item.classList.contains('season-summer')) matchSeason = true;
-                    if (fall && item.classList.contains('season-fall')) matchSeason = true;
-                    if (winter && item.classList.contains('season-winter')) matchSeason = true;
-                }
-
-                let matchOccasion = !hasOccasionChecked;
-                if (hasOccasionChecked) {
-                    if (work && item.classList.contains('occasion-work')) matchOccasion = true;
-                    if (casual && item.classList.contains('occasion-casual')) matchOccasion = true;
-                    if (date && item.classList.contains('occasion-date')) matchOccasion = true;
-                    if (sports && item.classList.contains('occasion-sports')) matchOccasion = true;
-                    if (formal && item.classList.contains('occasion-formal')) matchOccasion = true;
-                    if (home && item.classList.contains('occasion-home')) matchOccasion = true;
-                }
-
-                let matchColor = !hasColorChecked;
-                if (hasColorChecked) {
-                    if (black && item.classList.contains('color-black')) matchColor = true;
-                    if (white && item.classList.contains('color-white')) matchColor = true;
-                    if (blue && item.classList.contains('color-blue')) matchColor = true;
-                    if (gray && item.classList.contains('color-gray')) matchColor = true;
-                    if (brown && item.classList.contains('color-brown')) matchColor = true;
-                    if (red && item.classList.contains('color-red')) matchColor = true;
-                    if (green && item.classList.contains('color-green')) matchColor = true;
-                    if (khaki && item.classList.contains('color-khaki')) matchColor = true;
-                    if (yellow && item.classList.contains('color-yellow')) matchColor = true;
-                }
-
-                if (matchCategory && matchStatus && matchSeason && matchOccasion && matchColor) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-
-            document.querySelectorAll('.filter-grid, .scroll-row').forEach(grid => {
-                let hasVisible = false;
-                grid.querySelectorAll('.filter-item').forEach(item => {
-                    if (item.style.display !== 'none') hasVisible = true;
-                });
-                
-                if (currentCategory === 'all') {
-                    grid.style.display = 'flex';
-                    grid.style.flexWrap = 'nowrap';
-                    grid.style.overflowX = 'auto';
-                } else {
-                    grid.style.display = hasVisible ? 'flex' : 'none';
-                    grid.style.flexWrap = 'wrap';
-                    grid.style.overflowX = 'visible';
-                }
-            });
-        }
-    </script>
+    
+    <script src="../assets/js/gallery_demo.js"></script>
 </body>
 </html>
-

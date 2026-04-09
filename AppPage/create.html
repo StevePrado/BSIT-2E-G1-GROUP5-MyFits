@@ -11,109 +11,11 @@
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f7f8fa; overflow-x: hidden; padding-top: 80px; }
-        
-        .navbar { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.95) !important; border-bottom: 1px solid rgba(0,0,0,0.05) !important; }
-        .navbar-brand { font-weight: 900; font-size: 1.5rem; letter-spacing: -1px; }
-        .nav-link { color: #333 !important; font-weight: 500; margin: 0 10px; transition: color 0.3s ease; }
-        .nav-link:hover { color: #000 !important; }
-        .nav-link.active { font-weight: 800; border-bottom: 2px solid #000; }
-
-        .main-container { padding: 30px 40px; }
-        .catalogue-wrapper { background-color: #fff; border-radius: 20px; min-height: calc(100vh - 140px); padding: 35px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
-        .canvas-wrapper { background-color: #fff; border-radius: 20px; min-height: calc(100vh - 140px); padding: 35px; position: sticky; top: 110px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
-        
-        .filter-sidebar { position: sticky; top: 110px; height: calc(100vh - 140px); overflow-y: auto; z-index: 10; padding-right: 20px;}
-        .filter-sidebar::-webkit-scrollbar { width: 4px; }
-        .filter-sidebar::-webkit-scrollbar-thumb { background-color: #ddd; border-radius: 4px; }
-        .filter-title { font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-top: 25px; margin-bottom: 12px; display: flex; justify-content: space-between; cursor: pointer; letter-spacing: 0.5px;}
-        .form-check-label { font-size: 0.85rem; color: #555; font-weight: 500;}
-        .form-check-input:checked { background-color: #000; border-color: #000; }
-
-        .catalogue-header { font-weight: 800; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; margin-bottom: 25px; letter-spacing: -0.5px;}
-        .drag-me-text { font-size: 0.8rem; font-weight: 800; color: #fff; background: #000; padding: 4px 10px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .section-title { font-weight: 800; font-size: 0.95rem; margin-top: 10px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; color: #222;}
-        
-        .filter-pill { border-radius: 50px; padding: 6px 16px; font-size: 0.85rem; font-weight: 600; border: 1px solid #ccc; background: transparent; color: #333; transition: all 0.3s;}
-        .filter-pill.active { background: #000; color: #fff; border-color: #000;}
-        .filter-pill:hover:not(.active) { background: #f0f0f0; }
-
-        .scroll-row {
-            display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 1.2rem; padding-bottom: 15px; scrollbar-width: thin; margin-bottom: 30px;
-        }
-        .scroll-row::-webkit-scrollbar { height: 6px; }
-        .scroll-row::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-        
-        .scroll-item { width: 170px; flex-shrink: 0; }
-        .item-card { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 16px; padding: 15px; text-align: center; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;}
-        .item-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); background: #fff; border-color: #ccc; }
-        .item-card:active { transform: scale(0.98); }
-        .item-img { width: 100%; height: 140px; object-fit: contain; pointer-events: none; }
-        .item-title { font-weight: 600; font-size: 0.85rem; margin-top: 15px; color: #333; width: 100%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-
-        .canvas-title { font-weight: 800; font-size: 1.4rem; margin-bottom: 25px; letter-spacing: -0.5px; }
-        
-        .outfit-canvas-area {
-            width: 100%; height: 500px; border: 2px dashed #d0d0d0; border-radius: 16px;
-            margin-bottom: 20px; background: #fafafa;
-            display: flex; flex-direction: column; gap: 10px; padding: 10px;
-        }
-        .canvas-slot {
-            flex: 1; border-radius: 10px; background: #fff; border: 1px solid #eee;
-            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .canvas-slot-top { flex: 2.2; }
-        .canvas-slot-bottom { flex: 2; }
-        .canvas-slot-shoes { flex: 1.1; }
-        
-        .placeholder-text {
-            color: #aaa; text-align: center; font-weight: 600; font-size: 0.85rem; pointer-events: none; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .placeholder-text i { font-size: 1.8rem; margin-bottom: 5px; opacity: 0.5; display: block; }
-        
-        .equipped-img { width: 100%; height: 100%; object-fit: contain; padding: 5px;}
-        .remove-item-btn {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(0,0,0,0.65); color: #fff; border: none;
-            border-radius: 50%; width: 28px; height: 28px; font-size: 16px; line-height: 1;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s;
-        }
-        .remove-item-btn:hover { background: #ff4d4d; color: #fff; }
-
-        .btn-randomize { background-color: #fff; color: #000; font-weight: 700; border-radius: 14px; padding: 14px; width: 100%; border: 2px solid #000; transition: 0.3s; margin-bottom: 20px; font-size: 0.95rem;}
-        .btn-randomize:hover { background-color: #000; color: #fff; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1);}
-
-        .edit-panel { background-color: #1a1a1a; border-radius: 18px; padding: 30px 25px; color: #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
-        .name-input { background: transparent; border: none; color: #fff; font-size: 1.3rem; font-weight: 700; width: 100%; outline: none; margin-bottom: 25px; }
-        .name-input::placeholder { color: #666; }
-        .tag-list { list-style: none; padding: 0; margin: 0; background-color: rgba(255,255,255,0.05); border-radius: 14px; overflow: hidden; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08);}
-        .tag-item { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; font-size: 0.9rem; font-weight: 500;}
-        .tag-item:last-child { border-bottom: none; }
-        .tag-item:hover { background-color: rgba(255,255,255,0.1); }
-        .tag-item i.bi-chevron-right { color: #888; }
-        
-        .btn-schedule { background-color: #fff; color: #000; font-weight: 700; border-radius: 12px; padding: 16px; width: 100%; border: none; transition: 0.3s; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;}
-        .btn-schedule:hover { background-color: #e0e0e0; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.15); }
-
-        .btn-save { transition: transform 0.2s, box-shadow 0.2s;}
-        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.15); background-color: #f1f1f1 !important;}
-
-        .preview-outfit-card { background: #f5f5f5; border-radius: 16px; overflow: hidden; padding: 20px 0;}
-        .preview-info { padding: 20px; }
-        .preview-info h5 { font-weight: 800; margin-bottom: 5px; }
-        .preview-info .badge-tag { background: #222; color: #fff; border-radius: 50px; padding: 5px 15px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-right: 5px; margin-top: 8px; }
-
-        footer { background-color: #111; color: #fff; padding: 70px 0; margin-top: 60px;}
-        .footer-link { text-decoration: none; color: #888; margin-bottom: 12px; display: inline-block; transition: all 0.3s ease; font-size: 0.9rem; }
-        .footer-link:hover { color: #fff; transform: translateX(5px); }
-        .footer-input { border-radius: 8px; border: none; padding: 14px; width: 100%; outline: none; background: #222; color: #fff;}
-        .footer-input::placeholder { color: #666; }
-    </style>
+    
+    <link rel="stylesheet" href="../assets/css/style.css?v=1.1">
 </head>
 <body>
+    <!-- Navigation bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white py-4 fixed-top border-bottom">
         <div class="container">
             <a class="navbar-brand" href="mycloset.html">MY FiTS</a>
@@ -163,12 +65,13 @@
                 <div class="mb-4">
                     <div class="filter-title">Occasions <i class="bi bi-chevron-right"></i></div>
                     <div class="form-check mt-2"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-work"><label class="form-check-label">Work</label></div>
-                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-school"><label class="form-check-label">School</label></div>
                     <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-casual"><label class="form-check-label">Casual</label></div>
                     <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-date"><label class="form-check-label">Date</label></div>
                     <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-sports"><label class="form-check-label">Sports</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-party"><label class="form-check-label">Party</label></div>
                     <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-formal"><label class="form-check-label">Formal Event</label></div>
-                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-home"><label class="form-check-label">At Home</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-school"><label class="form-check-label">School</label></div>
+                    <div class="form-check"><input class="form-check-input filter-checkbox" type="checkbox" data-type="occasion" data-val="occasion-home"><label class="form-check-label">Home</label></div>
                 </div>
 
                 <div class="mb-4">
@@ -244,19 +147,19 @@
                     
                     <ul class="tag-list mb-3">
                         <li class="tag-item" data-bs-toggle="modal" data-bs-target="#statusModal">
-                            <div><span class="fs-5 me-2">✅</span> Status</div>
+                            <div>Status</div>
                             <div><span id="val-status" class="fw-bold fw-medium text-white">Available</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
                         </li>
                         <li class="tag-item mt-2" data-bs-toggle="modal" data-bs-target="#seasonModal">
-                            <div><span class="fs-5 me-2">🌸</span> Season</div>
+                            <div>Season</div>
                             <div><span id="val-season" class="fw-bold fw-medium text-white">Summer</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
                         </li>
                         <li class="tag-item mt-2" data-bs-toggle="modal" data-bs-target="#occasionModal">
-                            <div><span class="fs-5 me-2">💼</span> Occasion</div>
+                            <div>Occasion</div>
                             <div><span id="val-occasion" class="fw-bold fw-medium text-white">School</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
                         </li>
                         <li class="tag-item mt-2" data-bs-toggle="modal" data-bs-target="#colorModal">
-                            <div><span class="fs-5 me-2">🎨</span> Color</div>
+                            <div>Color</div>
                             <div><span id="val-color" class="fw-bold fw-medium text-white">Black</span> <i class="bi bi-chevron-right ms-2 text-secondary"></i></div>
                         </li>
                     </ul>
@@ -288,6 +191,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer section -->
 
     <footer>
         <div class="container">
@@ -330,8 +235,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group list-group-flush option-list" data-target="val-status">
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">✅</span> Available</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🧺</span> In Laundry</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Available</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">In Laundry</button>
                     </div>
                 </div>
             </div>
@@ -347,12 +252,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group list-group-flush option-list" data-target="val-occasion">
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium active"><span class="fs-5 me-2">🌍</span> Any Occasion</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">💼</span> Work</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">☕</span> Casual</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">👔</span> Formal</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🎉</span> Party</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">💪</span> Gym</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium active">Any Occasion</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="work">Work</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="casual">Casual</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="date">Date</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="sports">Sports</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="party">Party</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="formal">Formal Event</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="school">School</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium" data-val="home">Home</button>
                     </div>
                 </div>
             </div>
@@ -368,11 +276,11 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group list-group-flush option-list" data-target="val-season">
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🌍</span> Any Season</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🌸</span> Spring</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">☀️</span> Summer</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🍂</span> Fall</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">❄️</span> Winter</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Any Season</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Spring</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Summer</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Fall</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Winter</button>
                     </div>
                 </div>
             </div>
@@ -388,15 +296,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group list-group-flush option-list" data-target="val-color" style="max-height:300px; overflow-y:auto;">
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">⚫</span> Black</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">⚪</span> White</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🔵</span> Blue</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🔘</span> Gray</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🟤</span> Brown</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🔴</span> Red</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🟢</span> Green</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🟡</span> Yellow</button>
-                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium"><span class="fs-5 me-2">🟤</span> Khaki</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Black</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">White</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Blue</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Gray</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Brown</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Red</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Green</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Yellow</button>
+                        <button type="button" class="list-group-item list-group-item-action border-0 py-3 fw-medium">Khaki</button>
                     </div>
                 </div>
             </div>
@@ -440,324 +348,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-
-            $('.option-list .list-group-item').click(function() {
-                let selectionText = $(this).text().trim();
-                
-                let targetId = $(this).closest('.option-list').data('target');
-                
-                $('#' + targetId).text(selectionText);
-                
-                $(this).closest('.modal').modal('hide');
-            });
-
-            $('#saveOutfitBtn').click(function() {
-                var topImg = $('#slot-top .equipped-img').attr('src');
-                var bottomImg = $('#slot-bottom .equipped-img').attr('src');
-                var shoesImg = $('#slot-shoes .equipped-img').attr('src');
-                
-                var previewHtml = '';
-
-                if (!topImg && !bottomImg && !shoesImg) {
-                    previewHtml = '<div class="empty-preview" style="height: 100%; display: flex; align-items: center; justify-content: center; color: #aaa; font-weight: 600;">No items equipped</div>';
-                } else {
-                    previewHtml += '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 15px 0;">';
-                    
-                    if(topImg) {
-                        previewHtml += `<img src="${topImg}" style="width: auto; height: 170px; object-fit: contain; z-index: 2; position: relative; mix-blend-mode: multiply;">`;
-                    }
-                    if(bottomImg) {
-                        let mt = topImg ? '-35px' : '0';
-                        previewHtml += `<img src="${bottomImg}" style="width: auto; height: 200px; object-fit: contain; z-index: 1; position: relative; margin-top: ${mt}; mix-blend-mode: multiply;">`;
-                    }
-                    if(shoesImg) {
-                        let mt = bottomImg ? '-35px' : (topImg ? '-20px' : '0');
-                        previewHtml += `<img src="${shoesImg}" style="width: auto; height: 90px; object-fit: contain; z-index: 3; position: relative; margin-top: ${mt}; mix-blend-mode: multiply;">`;
-                    }
-                    
-                    previewHtml += '</div>';
-                }
-                
-                $('#previewCard').html(previewHtml);
-
-                var outfitName = $('.name-input').val() || 'Untitled Outfit';
-                var status = $('#val-status').text();
-                var occasion = $('#val-occasion').text();
-                var season = $('#val-season').text();
-                var color = $('#val-color').text();
-                var scheduleDate = $('#scheduleDateInput').val();
-                var repeatWeekly = $('#repeatWeeklyToggle').is(':checked');
-                let displayDate = scheduleDate ? scheduleDate + (repeatWeekly ? ' (Weekly)' : '') : 'Unscheduled';
-
-                $('#previewInfo').html(
-                    '<h5 class="fw-bold mb-3">' + outfitName + '</h5>' +
-                    '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">✅</span> ' + status + '</span>' +
-                    '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">🌸</span> ' + season + '</span>' +
-                    '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">💼</span> ' + occasion + '</span><br>' +
-                    '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white mb-2"><span class="me-1">🎨</span> ' + color + '</span>' +
-                    '<span class="badge bg-dark rounded-pill me-2 px-3 py-2 fw-medium text-white"><i class="bi bi-calendar-event me-2"></i>' + displayDate + '</span>'
-                );
-
-                var modal = new bootstrap.Modal(document.getElementById('previewModal'));
-                modal.show();
-            });
-
-            $('#confirmSaveBtn').click(function() {
-                let urlParams = new URLSearchParams(window.location.search);
-                let currentOutfitId = urlParams.get('id');
-
-                let topId = $('#slot-top .equipped-img').data('id') || null;
-                let bottomId = $('#slot-bottom .equipped-img').data('id') || null;
-                let shoesId = $('#slot-shoes .equipped-img').data('id') || null;
-                let name = $('.name-input').val().trim() || 'Untitled Outfit';
-                let rawStatus = $('#val-status').text().trim();
-                let status = rawStatus === 'In Laundry' ? 'laundry' : 'ready';
-                
-                let rawSeason = $('#val-season').text().trim();
-                let season = rawSeason === 'Any Season' ? 'all-season' : rawSeason.toLowerCase();
-                
-                let rawOccasion = $('#val-occasion').text().trim();
-                let occasion = rawOccasion === 'Any Occasion' ? 'any-occasion' : rawOccasion.toLowerCase();
-                
-                let color = $('#val-color').text().trim().toLowerCase();
-                let scheduleDate = $('#scheduleDateInput').val() || null;
-                let repeatWeekly = $('#repeatWeeklyToggle').is(':checked') ? 1 : 0;
-                
-                let outfitData = { id: currentOutfitId, top_id: topId, bottom_id: bottomId, shoes_id: shoesId, name: name, season: season, occasion: occasion, color: color, status: status, scheduleDate: scheduleDate, repeatWeekly: repeatWeekly };
-                
-                let btn = $(this);
-                btn.text('Saving...').prop('disabled', true);
-                
-                $.ajax({
-                    url: 'save_outfit.php',
-                    type: 'POST',
-                    data: { outfitData: JSON.stringify(outfitData) },
-                    dataType: 'json',
-                    success: function(res) {
-                        btn.text('Save to Closet').prop('disabled', false);
-                        if(res.status === 200) {
-                            bootstrap.Modal.getInstance(document.getElementById('previewModal')).hide();
-                            alert('Outfit saved successfully!');
-                            window.location.href = 'mycloset.html';
-                        } else {
-                            alert(res.message);
-                        }
-                    },
-                    error: function() {
-                        btn.text('Save to Closet').prop('disabled', false);
-                        alert('Network Error connecting to server.');
-                    }
-                });
-            });
-
-            $.ajax({
-                url: 'get_session.php',
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 200) {
-                        $('#userNameDisplay').text(response.userName);
-                    }
-                },
-                error: function() {
-                    console.error('Failed to fetch user session.');
-                }
-            });
-
-            $('.filter-checkbox').change(function() {
-                applyFilters();
-            });
-
-            $('#searchInput').on('input', function() {
-                applyFilters();
-            });
-
-            $('#categoryFilters .filter-pill').click(function() {
-                $('#categoryFilters .filter-pill').removeClass('active');
-                $(this).addClass('active');
-                applyFilters();
-            });
-
-            function applyFilters() {
-                let search = $('#searchInput').val().toLowerCase();
-                let activeCategory = $('#categoryFilters .filter-pill.active').data('filter');
-                let checkedTypes = { status: [], season: [], occasion: [], color: [] };
-                
-                $('.filter-checkbox:checked').each(function() {
-                    let type = $(this).data('type');
-                    let val = $(this).data('val');
-                    if (type && val) {
-                        checkedTypes[type].push(val);
-                    }
-                });
-
-                if (activeCategory === 'all') {
-                    $('.section-title, .item-group').show();
-                } else {
-                    $('.section-title, .item-group').hide();
-                    $(`.item-group[data-category="${activeCategory}"], .section-title[data-category="${activeCategory}"]`).show();
-                }
-
-                $('.filter-item').each(function() {
-                    let $el = $(this);
-                    
-                    let matchStatus = checkedTypes.status.length === 0 || checkedTypes.status.some(c => $el.hasClass(c) || (c === 'status-ready' && !$el.hasClass('status-laundry')));
-                    let matchSeason = checkedTypes.season.length === 0 || checkedTypes.season.some(c => $el.hasClass(c) || $el.hasClass('season-all-season'));
-                    let matchOccasion = checkedTypes.occasion.length === 0 || checkedTypes.occasion.some(c => $el.hasClass(c) || $el.hasClass('occasion-any-occasion'));
-                    let matchColor = checkedTypes.color.length === 0 || checkedTypes.color.some(c => $el.hasClass(c));
-                    
-                    let itemName = $el.data('name').toLowerCase();
-                    let matchSearch = itemName.includes(search);
-
-                    let matchCategoryFilter = (activeCategory === 'all' || $el.hasClass(activeCategory));
-
-                    if (matchStatus && matchSeason && matchOccasion && matchColor && matchSearch && matchCategoryFilter) {
-                        $el.show();
-                    } else {
-                        $el.hide();
-                    }
-                });
-            }
-
-            $(document).on('click', '.clickable-item', function() {
-                let isLaundry = $(this).closest('.filter-item').hasClass('status-laundry');
-                
-                let category = $(this).data('category');
-                let imgSrc = $(this).data('img');
-                let clothId = $(this).data('id');
-                
-                let warningBadge = isLaundry ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
-                
-                let slotId = '#slot-' + category;
-                $(slotId).html(`
-                    ${warningBadge}
-                    <img src="${imgSrc}" class="equipped-img" data-img="${imgSrc}" data-id="${clothId}">
-                    <button class="remove-item-btn" onclick="removeEquipped('${category}', event)">&times;</button>
-                `);
-            });
-
-            window.removeEquipped = function(category, event) {
-                if (event) event.stopPropagation();
-                let icons = { 
-                    top: '<i class="bi bi-person-fill-up"></i>Top', 
-                    bottom: '<i class="bi bi-person-fill-down"></i>Bottom', 
-                    shoes: '<i class="bi bi-person-walking"></i>Shoes' 
-                };
-                $('#slot-' + category).html(`<div class="placeholder-text">${icons[category]}</div>`);
-            };
-
-            $("#btn-randomize").click(function() {
-                ['top', 'bottom', 'shoes'].forEach(cat => {
-                    let items = $(`.filter-item.${cat}:visible:not(.status-laundry) .clickable-item`);
-                    if (items.length > 0) {
-                        let randomIdx = Math.floor(Math.random() * items.length);
-                        let randomItem = $(items[randomIdx]);
-                        let imgSrc = randomItem.data('img');
-                        let clothId = randomItem.data('id');
-                        let slotId = '#slot-' + cat;
-                        $(slotId).html(`
-                            <img src="${imgSrc}" class="equipped-img" data-img="${imgSrc}" data-id="${clothId}">
-                            <button class="remove-item-btn" onclick="removeEquipped('${cat}', event)">&times;</button>
-                        `);
-                    } else {
-                        window.removeEquipped(cat);
-                    }
-                });
-            });
-
-            fetch('get_clothes.php')
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 200) {
-                    const categoryMap = { 'top': 'topsRow', 'bottom': 'bottomsRow', 'shoes': 'shoesRow' };
-                    data.clothes.reverse().forEach(item => {
-                        let targetRow = document.getElementById(categoryMap[item.category]);
-                        if (!targetRow) return;
-                        
-                        let newItem = document.createElement('div');
-                        newItem.className = `scroll-item filter-item ${item.category} status-${item.status} season-${item.season} occasion-${item.occasion} color-${item.color}`;
-                        newItem.setAttribute('data-name', item.name);
-                        newItem.innerHTML = `
-                            <div class="item-card clickable-item" data-category="${item.category}" data-img="${item.image}" data-id="${item.id}">
-                                ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>' : ''}
-                                <img src="${item.image}" class="item-img" style="${item.status === 'laundry' ? 'opacity: 0.5;' : ''}; object-fit: contain;">
-                                <div class="item-title ${item.status === 'laundry' ? 'text-muted' : ''}">${item.name}</div>
-                            </div>
-                        `;
-                        targetRow.prepend(newItem);
-                    });
-                    applyFilters();
-                }
-            })
-            .catch(err => console.error(err));
-
-            let urlParams = new URLSearchParams(window.location.search);
-            let outfitId = urlParams.get('id');
-            if (outfitId) {
-                $('#saveOutfitBtn').html('Update Outfit <i class="bi bi-cloud-arrow-up ms-2 fs-5"></i>');
-                $('.canvas-title').text('Edit Outfit');
-                
-                fetch('get_outfit.php?id=' + outfitId)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 200 && data.outfit) {
-                        let outfit = data.outfit;
-                        $('.name-input').val(outfit.name);
-                        $('#val-status').text(outfit.status === 'laundry' ? 'In Laundry' : 'Available');
-                        $('#val-season').text(outfit.season === 'all-season' ? 'Any Season' : (outfit.season.charAt(0).toUpperCase() + outfit.season.slice(1)));
-                        $('#val-occasion').text(outfit.occasion === 'any-occasion' ? 'Any Occasion' : (outfit.occasion.charAt(0).toUpperCase() + outfit.occasion.slice(1)));
-                        $('#val-color').text(outfit.color.charAt(0).toUpperCase() + outfit.color.slice(1));
-                        
-                        if (outfit.top_image) $('#slot-top').html(`<img src="${outfit.top_image}" class="equipped-img" data-img="${outfit.top_image}" data-id="${outfit.top_id}"><button class="remove-item-btn" onclick="removeEquipped('top', event)">&times;</button>`);
-                        if (outfit.bottom_image) $('#slot-bottom').html(`<img src="${outfit.bottom_image}" class="equipped-img" data-img="${outfit.bottom_image}" data-id="${outfit.bottom_id}"><button class="remove-item-btn" onclick="removeEquipped('bottom', event)">&times;</button>`);
-                        if (outfit.shoes_image) $('#slot-shoes').html(`<img src="${outfit.shoes_image}" class="equipped-img" data-img="${outfit.shoes_image}" data-id="${outfit.shoes_id}"><button class="remove-item-btn" onclick="removeEquipped('shoes', event)">&times;</button>`);
-                    }
-                })
-                .catch(err => console.error("Error loading outfit:", err));
-            }
-
-            $('#deleteOutfitBtn').click(function() {
-                if (!confirm('Are you sure you want to delete this outfit? This action cannot be undone.')) return;
-                
-                let outfitName = $('.name-input').val().trim() || 'this outfit';
-                let btn = $(this);
-                btn.text('Deleting...').prop('disabled', true);
-                
-                let urlParams = new URLSearchParams(window.location.search);
-                let outfitId = urlParams.get('id');
-                
-                if (outfitId) {
-                    $.ajax({
-                        url: 'delete_outfit.php',
-                        type: 'POST',
-                        data: { outfit_id: outfitId },
-                        dataType: 'json',
-                        success: function(res) {
-                            if (res.status === 200) {
-                                alert('Outfit deleted successfully!');
-                                window.location.href = 'mycloset.html';
-                            } else {
-                                alert(res.message);
-                                btn.html('<i class="bi bi-trash3 me-2 fs-5"></i> Delete Outfit').prop('disabled', false);
-                            }
-                        },
-                        error: function() {
-                            alert('Network error while deleting.');
-                            btn.html('<i class="bi bi-trash3 me-2 fs-5"></i> Delete Outfit').prop('disabled', false);
-                        }
-                    });
-                } else {
-                    ['top', 'bottom', 'shoes'].forEach(cat => window.removeEquipped(cat));
-                    $('.name-input').val('');
-                    alert('Canvas cleared!');
-                    btn.html('<i class="bi bi-trash3 me-2 fs-5"></i> Delete Outfit').prop('disabled', false);
-                }
-            });
-
-        });
-    </script>
+    
+    <script src="../assets/js/create.js?v=1.1"></script>
 </body>
 </html>
