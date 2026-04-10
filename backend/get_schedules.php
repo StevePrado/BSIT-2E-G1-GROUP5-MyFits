@@ -16,7 +16,7 @@ $end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d', strtoti
 
 // Fetch schedule query
 $query = "SELECT 
-    s.id, s.outfit_id, s.scheduled_date, s.is_worn, s.is_recurring, s.recurrence_day,
+    s.id, s.outfit_id, s.scheduled_date, s.is_worn, s.is_recurring, s.recurrence_day, s.excluded_dates,
     o.name as outfit_name, o.season, o.occasion, o.color, o.preview_image,
     o.top_id, o.bottom_id, o.shoes_id,
     t.image as top_image, b.image as bottom_image, sh.image as shoes_image,
@@ -67,7 +67,17 @@ foreach ($period as $date) {
     } else {
         // Check recurring
         $recurring_items = array_filter($all_rows, function($r) use ($day_of_week, $current_date_str) {
-            return $r['is_recurring'] == 1 && $r['recurrence_day'] === $day_of_week && $r['scheduled_date'] <= $current_date_str;
+            if ($r['is_recurring'] != 1 || $r['recurrence_day'] !== $day_of_week || $r['scheduled_date'] > $current_date_str) {
+                return false;
+            }
+            // Check excluded dates
+            if (!empty($r['excluded_dates'])) {
+                $excluded = json_decode($r['excluded_dates'], true);
+                if (is_array($excluded) && in_array($current_date_str, $excluded)) {
+                    return false;
+                }
+            }
+            return true;
         });
 
         foreach($recurring_items as $item) {

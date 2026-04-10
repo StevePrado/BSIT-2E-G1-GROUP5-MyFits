@@ -111,8 +111,7 @@ $(document).ready(function() {
         });
     });
 
-    // Session loader
-    // Fetches the logged
+    // Session shield
     $.ajax({
         url: '../backend/get_session.php',
         type: 'GET',
@@ -120,10 +119,13 @@ $(document).ready(function() {
         success: function(response) {
             if (response.status === 200) {
                 $('#userNameDisplay').text(response.userName);
+            } else {
+                window.location.href = '../MarketingPage/login.html';
             }
         },
         error: function() {
             console.error('Failed to fetch user session.');
+            window.location.href = '../MarketingPage/login.html';
         }
     });
 
@@ -154,21 +156,27 @@ $(document).ready(function() {
                     }
                     $('#repeatWeeklyToggle').prop('checked', outfit.is_recurring == 1);
                     
-                    // Pre
+                    // Pre-populate canvas slots with laundry badges
                     if (outfit.top_id) {
+                        let topLaundryBadge = outfit.top_status === 'laundry' ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
                         $('#slot-top').html(`
+                            ${topLaundryBadge}
                             <img src="${outfit.top_image}" class="equipped-img" data-img="${outfit.top_image}" data-id="${outfit.top_id}">
                             <button class="remove-item-btn" onclick="removeEquipped('top', event)">&times;</button>
                         `);
                     }
                     if (outfit.bottom_id) {
+                        let bottomLaundryBadge = outfit.bottom_status === 'laundry' ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
                         $('#slot-bottom').html(`
+                            ${bottomLaundryBadge}
                             <img src="${outfit.bottom_image}" class="equipped-img" data-img="${outfit.bottom_image}" data-id="${outfit.bottom_id}">
                             <button class="remove-item-btn" onclick="removeEquipped('bottom', event)">&times;</button>
                         `);
                     }
                     if (outfit.shoes_id) {
+                        let shoesLaundryBadge = outfit.shoes_status === 'laundry' ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
                         $('#slot-shoes').html(`
+                            ${shoesLaundryBadge}
                             <img src="${outfit.shoes_image}" class="equipped-img" data-img="${outfit.shoes_image}" data-id="${outfit.shoes_id}">
                             <button class="remove-item-btn" onclick="removeEquipped('shoes', event)">&times;</button>
                         `);

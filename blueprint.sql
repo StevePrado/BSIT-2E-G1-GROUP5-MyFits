@@ -41,6 +41,7 @@ CREATE TABLE schedule (
     is_worn TINYINT DEFAULT 0,
     is_recurring TINYINT DEFAULT 0,
     recurrence_day VARCHAR(20) NULL,
+    excluded_dates TEXT DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (outfit_id) REFERENCES outfits (id)
 );

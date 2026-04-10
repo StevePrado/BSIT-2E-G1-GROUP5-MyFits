@@ -41,10 +41,10 @@ function submitSupportForm() {
     });
 }
 
-// Fetches the logged
+// Session shield
 $(document).ready(function() {
     $.ajax({
-        url: '../backend/get_session.php',       // The "ID Checker" backend
+        url: '../backend/get_session.php',
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -52,10 +52,13 @@ $(document).ready(function() {
                 $('#userNameDisplay').text(response.userName);
                 // Auto
                 $('#senderEmail').val(response.userName + " (" + response.userEmail + ")");
+            } else {
+                window.location.href = '../MarketingPage/login.html';
             }
         },
         error: function() {
             console.error('Failed to fetch user session.');
+            window.location.href = '../MarketingPage/login.html';
         }
     });
 });

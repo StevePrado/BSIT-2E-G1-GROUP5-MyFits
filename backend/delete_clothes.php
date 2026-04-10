@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($deleteStmt->execute()) {
             if (file_exists($imagePath)) {
-                unlink($imagePath);    // unlink() = PHP's way of deleting a file
+                unlink($imagePath);    
             }
             echo json_encode(["status" => 200, "message" => "Item deleted successfully."]);
         } else {

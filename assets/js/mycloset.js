@@ -748,15 +748,22 @@ function openEditClothesModal(id, name, category, season, occasion, color, statu
 
 // Page initialization
         document.addEventListener('DOMContentLoaded', () => {
+            // Session shield
             fetch('../backend/get_session.php')
             .then(res => res.json())
             .then(data => {
                 if (data.status === 200) {
                     const userNameEl = document.getElementById('userNameDisplay');
                     if (userNameEl) userNameEl.textContent = data.userName;
+                } else {
+                    window.location.href = '../MarketingPage/login.html';
+                    return;
                 }
             })
-            .catch(err => console.error('Failed to fetch user session:', err));
+            .catch(err => {
+                console.error('Failed to fetch user session:', err);
+                window.location.href = '../MarketingPage/login.html';
+            });
 
             applyFilters();
         });

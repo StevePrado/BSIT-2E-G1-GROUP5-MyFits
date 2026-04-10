@@ -162,7 +162,14 @@ $(document).ready(function() {
                     if(res.status === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('previewModal')).hide();
                         alert('✅ Saved Successfully!');
-                        window.location.href = 'mycloset.html';
+                        // Return-to-calendar navigation
+                        let returnParams = new URLSearchParams(window.location.search);
+                        let returnDate = returnParams.get('return_date');
+                        if (returnDate) {
+                            window.location.href = 'calendar.html?goto_date=' + returnDate;
+                        } else {
+                            window.location.href = 'mycloset.html';
+                        }
                     } else {
                         alert(res.message);
                     }
@@ -175,8 +182,7 @@ $(document).ready(function() {
         });
     });
 
-    // Session loader
-    // Fetches the logged
+    // Session shield
     $.ajax({
         url: '../backend/get_session.php',
         type: 'GET',
@@ -184,10 +190,13 @@ $(document).ready(function() {
         success: function(response) {
             if (response.status === 200) {
                 $('#userNameDisplay').text(response.userName);
+            } else {
+                window.location.href = '../MarketingPage/login.html';
             }
         },
         error: function() {
             console.error('Failed to fetch user session.');
+            window.location.href = '../MarketingPage/login.html';
         }
     });
 

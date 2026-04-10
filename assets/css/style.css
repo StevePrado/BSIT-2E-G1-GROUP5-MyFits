@@ -514,6 +514,19 @@ body { font-family: 'Poppins', sans-serif; background-color: #fff; overflow-x: h
         }
         .fab-main:hover { background-color: #333; transform: scale(1.05); }
 
+        .fab-option-btn {
+            background-color: #000; color: #fff; border: none; border-radius: 50px;
+            padding: 10px 24px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+            text-decoration: none; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .fab-option-btn:hover {
+            background-color: #333; color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+
         .laundry-card .laundry-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6); border-radius: 8px;
