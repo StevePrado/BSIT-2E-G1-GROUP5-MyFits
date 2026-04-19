@@ -608,6 +608,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 200) {
                 const userNameEl = document.getElementById('userNameDisplay');
                 if (userNameEl) userNameEl.textContent = data.userName;
+
+                // Show Admin Report link if admin
+                if (data.role === 'admin') {
+                    const dropdownMenu = document.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        const adminLink = document.createElement('li');
+                        adminLink.innerHTML = '<a class="dropdown-item" href="admin_report.html"><i class="bi bi-file-earmark-bar-graph me-2"></i>Admin Report</a>';
+                        dropdownMenu.prepend(adminLink);
+                    }
+                }
             } else {
                 window.location.href = '../MarketingPage/login.html';
                 return;

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFits Defense Reviewer - Deep Dive</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f4f6f8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .reviewer-card { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; overflow: hidden; border-left: 6px solid #4361ee; }
+        .reviewer-header { background: #111; color: white; padding: 18px 25px; font-weight: bold; font-size: 1.25rem; }
+        .filepath-badge { background: #3f37c9; color: white; font-family: monospace; padding: 5px 12px; border-radius: 6px; font-size: 0.85rem; display: inline-block; margin-bottom: 15px; margin-top: 10px; }
+        .reviewer-body { padding: 30px; }
+        .qa-container { margin-bottom: 35px; border-bottom: 1px dashed #e9ecef; padding-bottom: 20px; }
+        .qa-container:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .question { font-weight: 700; color: #111; font-size: 1.15rem; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 12px; }
+        .question i { color: #f72585; margin-top: 3px; }
+        .answer { color: #333; line-height: 1.7; margin-left: 32px; font-size: 1.05rem; }
+        .explanation-box { background-color: #eef2ff; border-left: 4px solid #4361ee; padding: 15px; margin-top: 15px; border-radius: 0 8px 8px 0; font-style: italic; color: #2b2d42; }
+        pre { background: #282c34; padding: 20px; border-radius: 8px; border: none; margin-top: 15px; overflow-x: auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        code { font-family: 'Fira Code', Consolas, Monaco, monospace; font-size: 0.95rem; color: #61afef; }
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-keyword { color: #c678dd; }
+        .code-string { color: #98c379; }
+        .rubric-tag { display: inline-block; background: #e9ecef; color: #495057; font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #ced4da; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold display-5" style="color: #111;">MyFits: The Ultimate Defense Reviewer</h1>
+        <p class="text-muted fs-5">An in-depth, file-by-file breakdown of exactly how your project meets the Advanced Database Systems rubric. Use this to study the "Why" and "Where" of your code.</p>
+    </div>
+
+    <!-- 1. Database Design & Normalization -->
+    <div class="reviewer-card">
+        <div class="reviewer-header">1. Database Design & Normalization (15% + 10%)</div>
+        <div class="reviewer-body">
+            
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> How did you apply normalization to your database design to prevent repeating columns?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> File: includes/blueprint.sql</div>
+                <div class="answer">
+                    We designed our relational database using multiple tables to eliminate data redundancy entirely. This implies our database sits in what is known as <strong>3rd Normal Form (3NF)</strong>.
+                    <br><br>
+                    <strong>Detailed Explanation:</strong> Instead of making one giant table that saves a user's name, the color of their shirt, and the day they wore it all in one row (which causes massive duplication), we split them up. 
+                    <ul>
+                        <li>We have a <code>users</code> table for credentials.</li>
+                        <li>We have a <code>clothes</code> table for the items themselves.</li>
+                        <li>We have an <code>outfits</code> table. The outfits table does NOT save the color or image of the shirt again; it simply saves the <strong>Foreign Key ID</strong> (e.g., <code>top_id = 15</code>) pointing back to the <code>clothes</code> table.</li>
+                        <li>Both tables point back to the <code>users</code> table via <code>user_id</code>.</li>
+                    </ul>
+                    <div class="explanation-box">
+                        <strong>If asked by the Professor:</strong> "Normalization simply means we don't repeat data. If I own a black shirt, its image and color are stored exactly ONCE in the database. Outfits and Schedules just point to its ID."
+                    </div>
+                </div>
+            </div>
+            
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> How does the Calendar Scheduling connect to Outfits without duplicating data?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> File: includes/blueprint.sql & backend/save_schedule.php</div>
+                <div class="answer">
+                    We use a dedicated junction table called <code>schedules</code>. It links an existing <code>outfit_id</code> (foreign key) to a specific <code>scheduled_date</code>. 
+                    <br><br>
+                    <strong>What it does:</strong> This allows a single outfit (like "My Sunday Best", ID: 10) to be worn repeatedly across 50 different calendar days without us having to copy the outfit 50 times in the database. We just create 50 schedule rows that all point back to Outfit ID 10.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Security & SQL Implementation -->
+    <div class="reviewer-card">
+        <div class="reviewer-header">2. Security, User Roles & SQL Validation (10% + 15%)</div>
+        <div class="reviewer-body">
+
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> How do you protect the database from Hackers trying a "SQL Injection" attack?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> File: backend/save_outfit.php</div>
+                <div class="answer">
+                    We utilize <strong>Prepared Statements</strong> across <em>all</em> of our PHP files. A prepared statement forces the database engine to treat user input strictly as text, neutralizing any malicious code they try to type into a form.
+<pre><code><span class="code-comment">// Notice how we use Question Marks (?) instead of actual variables in the query!</span>
+$stmt = $conn-&gt;prepare(<span class="code-string">"INSERT INTO outfits (user_id, name, top_id, bottom_id, shoes_id) VALUES (?, ?, ?, ?, ?)"</span>);
+
+<span class="code-comment">// Then we 'bind' the variables later. The 'isiii' tells MySQL exactly what to expect: </span>
+<span class="code-comment">// Integer, String, Integer, Integer, Integer. This makes injection impossible.</span>
+$stmt-&gt;bind_param(<span class="code-string">"isiii"</span>, $user_id, $name, $top_id, $bottom_id, $shoes_id);
+$stmt-&gt;execute();</code></pre>
+                    <div class="explanation-box">
+                        <strong>If asked by the Professor:</strong> "We never paste variables directly into SQL strings. We prepare the SQL statement with '?' marks first, and then bind the parameters safely. This makes SQL injection impossible because the database engine refuses to execute the variables as code."
+                    </div>
+                </div>
+            </div>
+
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> How did you implement Security, User Access, and Administrator Roles?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> File: backend/get_report.php & backend/login_process.php</div>
+                <div class="answer">
+                    First, for baseline security, passwords are never stored as plain text. When a user signs up, the system runs <code>password_hash()</code>. When they log in, it uses <code>password_verify()</code> to securely match the hash.
+                    <br><br>
+                    <strong>User Roles (The Advanced Feature):</strong> The database <code>users</code> table has a column called <code>role</code> which is an ENUM set to either <code>'user'</code> or <code>'admin'</code>. 
+                    <br>
+                    Our Report Generation API strictly blocks normal users via server-side checks. If someone is not an admin, they are forcefully denied.
+<pre><code><span class="code-comment">// The Server checks the database for the current logged-in user's role</span>
+$roleStmt = $conn-&gt;prepare(<span class="code-string">"SELECT role FROM users WHERE id = ?"</span>);
+$roleStmt-&gt;bind_param(<span class="code-string">"i"</span>, $user_id);
+$roleStmt-&gt;execute();
+$roleResult = $roleStmt-&gt;get_result()-&gt;fetch_assoc();
+
+<span class="code-comment">// If they are NOT an admin, block them completely and exit the script</span>
+if (!$roleResult || $roleResult['role'] !== <span class="code-string">'admin'</span>) {
+    echo json_encode([<span class="code-string">"status"</span> =&gt; 403, <span class="code-string">"message"</span> =&gt; <span class="code-string">"Access Denied: You do not have administrator privileges."</span>]);
+    <span class="code-keyword">exit</span>();
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Advanced Feature: Transactions -->
+    <div class="reviewer-card">
+        <div class="reviewer-header">3. Advanced Feature: Database Transactions (ACID) (10%)</div>
+        <div class="reviewer-body">
+
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> Can you explain why you needed a complex Database Transaction, and where it is in the code?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> File: backend/wear_outfit.php</div>
+                <div class="answer">
+                    <strong>The Problem:</strong> When a user marks an outfit as "Worn" inside our Calendar, multiple things must happen in the database instantly: <br>
+                    1. The specific calendar day must be marked as worn.<br>
+                    2. The Top, the Bottom, and the Shoes must all get +1 to their <code>wear_count</code> metric.<br>
+                    <br>
+                    <strong>The Solution (Transactions):</strong> We wrapped these multiple <code>UPDATE</code> queries inside a single Database Transaction. If our server crashes after updating the Top but before updating the Bottom, the system's inventory metrics would be permanently corrupted (mismatched wear counts). 
+                    <br><br>
+                    The <code>commit()</code> statement ensures that either ALL the updates lock into the database together, or if there is an error, <code>rollback()</code> reverses them entirely (like nothing ever happened).
+<pre><code><span class="code-comment">// 1. Start the Transaction. </span>
+<span class="code-comment">// Tells MySQL: "Pause saving permanently until I say we are done."</span>
+$conn-&gt;begin_transaction();
+
+try {
+    <span class="code-comment">// Action 1: Mark schedule row as worn</span>
+    $stmt1 = $conn-&gt;prepare(<span class="code-string">"UPDATE schedules SET is_worn = 1 WHERE id = ?"</span>); 
+    
+    <span class="code-comment">// Action 2: Increment the wear count for all 3 clothing items</span>
+    $stmt2 = $conn-&gt;prepare(<span class="code-string">"UPDATE clothes SET wear_count = wear_count + 1 WHERE id IN (?, ?, ?)"</span>); 
+    
+    <span class="code-comment">// Action 3: Finalize and save everything to the database together</span>
+    $conn-&gt;commit(); 
+    
+} catch (Exception $e) {
+    <span class="code-comment">// If ANYTHING fails, abort and delete the partial updates safely!</span>
+    $conn-&gt;rollback(); 
+    echo json_encode([<span class="code-string">"status"</span> =&gt; 500, <span class="code-string">"message"</span> =&gt; <span class="code-string">"Transaction failed, changes rolled back."</span>]);
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Advanced Feature: Views -->
+    <div class="reviewer-card">
+        <div class="reviewer-header">4. Advanced Feature: Materialized Views + Report Generation (10% + 15%)</div>
+        <div class="reviewer-body">
+
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> How did you optimize generating Reports for the Administrator?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> File: includes/run_advanced_migration.php & backend/get_report.php</div>
+                <div class="answer">
+                    <strong>The Problem:</strong> When an Admin clicks "System Report" to see how many clothes and outfits every user has, running massive SQL <code>JOIN</code> and <code>COUNT()</code> aggregations across thousands of rows can significantly slow down the PHP server.
+                    <br><br>
+                    <strong>The Advanced Solution (MySQL View):</strong> Instead of forcing PHP to do the math, we created a **MySQL View** named <code>user_inventory_report</code> directly inside the database. A View is like a saved, virtual, self-updating spreadsheet. The Database engine manages the complex aggregation logic behind the scenes. 
+                    <br><br>
+                    Because of this View, our PHP API endpoint does barely any work. It simply asks the database to read from the View instantly.
+<pre><code><span class="code-comment">// 1. The SQL we used to CREATE the virtual view inside the Database:</span>
+CREATE OR REPLACE VIEW user_inventory_report AS 
+SELECT 
+    u.id AS user_id, 
+    u.fname AS user_name,
+    COUNT(DISTINCT c.id) AS total_clothes, 
+    COUNT(DISTINCT o.id) AS total_outfits
+FROM users u
+LEFT JOIN clothes c ON u.id = c.user_id
+LEFT JOIN outfits o ON u.id = o.user_id
+GROUP BY u.id;
+
+<span class="code-comment">// 2. The simple, incredibly fast query inside get_report.php:</span>
+<span class="code-comment">// We don't need JOINS here anymore, the View handled it for us!</span>
+$query = <span class="code-string">"SELECT * FROM user_inventory_report"</span>;
+$result = $conn-&gt;query($query);
+</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 5. Client Server Integration -->
+    <div class="reviewer-card">
+        <div class="reviewer-header">5. Client-Server Architecture (10%)</div>
+        <div class="reviewer-body">
+
+            <div class="qa-container">
+                <div class="question"><i class="bi bi-question-circle-fill"></i> Walk me through the Client-Server flow. What happens behind the scenes when a user clicks "Add Clothes"?</div>
+                <div class="filepath-badge"><i class="bi bi-file-earmark-code"></i> Files: AppPage/mycloset.html -> assets/js/mycloset.js -> backend/add_clothes.php</div>
+                <div class="answer">
+                    This demonstrates a perfect 3-Tier Architecture workflow:
+                    <br><br>
+                    <ol>
+                        <li><strong>Step 1 (The Client / Browser):</strong> The user selects a photo and fills out the HTML form in <code>mycloset.html</code>. When they hit save, our Javascript (<code>mycloset.js</code>) prevents the page from reloading. It packages the image and form data into a heavy payload and sends an HTTP POST request (AJAX/Fetch) across the network.</li>
+                        <li><strong>Step 2 (The Server / PHP API):</strong> The API endpoint (<code>add_clothes.php</code>) receives the network request. The Server first acts as a security guard, reading the <code>$_SESSION['user_id']</code> to prove the user is logged in. It then securely moves the physical image file into our server's <code>/uploads</code> folder. Finally, it formulates the secure SQL statement.</li>
+                        <li><strong>Step 3 (The Database):</strong> The PHP server executes the parameterized <code>INSERT INTO clothes</code> command upon the MySQL database. The database locks in the row data.</li>
+                        <li><strong>Step 4 (The Response):</strong> The database returns a "Success" flag to PHP. PHP wraps that flag in a JSON object and echoes it back to Javascript. Javascript reads the successful JSON response and instantly draws the new clothing image onto the screen, providing a real-time, App-like experience for the user.</li>
+                    </ol>
+                    <div class="explanation-box">
+                        <strong>If asked by the Professor:</strong> "Our client is decoupled from our database. HTML never talks directly to MySQL. Javascript talks to PHP via JSON, and PHP talks to MySQL. This ensures security and scalability."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

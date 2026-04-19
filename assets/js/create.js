@@ -190,6 +190,16 @@ $(document).ready(function() {
         success: function(response) {
             if (response.status === 200) {
                 $('#userNameDisplay').text(response.userName);
+                
+                // Show Admin Report link if admin
+                if (response.role === 'admin') {
+                    const dropdownMenu = document.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        const adminLink = document.createElement('li');
+                        adminLink.innerHTML = '<a class="dropdown-item" href="admin_report.html"><i class="bi bi-file-earmark-bar-graph me-2"></i>Admin Report</a>';
+                        dropdownMenu.prepend(adminLink);
+                    }
+                }
             } else {
                 window.location.href = '../MarketingPage/login.html';
             }
@@ -285,27 +295,38 @@ $(document).ready(function() {
         $('#slot-' + category).html(`<div class="placeholder-text">${icons[category]}</div>`);
     };
 
-    // Randomize outfit
+    // Smart Randomizer outfit (Recommendation Engine)
     $("#btn-randomize").click(function() {
-        ['top', 'bottom', 'shoes'].forEach(cat => {
-            let items = $(`.filter-item.${cat}:visible .clickable-item`);
-            if (items.length > 0) {
-                let randomIdx = Math.floor(Math.random() * items.length);
-                let randomItem = $(items[randomIdx]);
-                let imgSrc = randomItem.data('img');
-                let clothId = randomItem.data('id');
-                let isLaundry = randomItem.closest('.filter-item').hasClass('status-laundry');
-                let warningBadge = isLaundry ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
-                
-                let slotId = '#slot-' + cat;
-                $(slotId).html(`
-                    ${warningBadge}
-                    <img src="${imgSrc}" class="equipped-img" data-img="${imgSrc}" data-id="${clothId}">
-                    <button class="remove-item-btn" onclick="removeEquipped('${cat}', event)">&times;</button>
-                `);
-            } else {
-                window.removeEquipped(cat);
-            }
+        let btn = $(this);
+        let originalText = btn.html();
+        btn.html('<i class="bi bi-hourglass-split"></i> Picking...').prop('disabled', true);
+        
+        let fetches = ['top', 'bottom', 'shoes'].map(cat => {
+            return fetch('../backend/smart_randomizer.php?category=' + cat)
+                .then(res => {
+                    if (!res.ok) throw new Error('Network error');
+                    return res.json();
+                })
+                .then(data => {
+                    let slotId = '#slot-' + cat;
+                    if (data.status === 200 && data.item) {
+                        let clothId = data.item.id;
+                        let imgSrc = data.item.image;
+                        let warningBadge = data.item.status === 'laundry' ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
+                        $(slotId).html(`
+                            ${warningBadge}
+                            <img src="${imgSrc}" class="equipped-img" data-img="${imgSrc}" data-id="${clothId}">
+                            <button class="remove-item-btn" onclick="removeEquipped('${cat}', event)">&times;</button>
+                        `);
+                    } else {
+                        // Keep current if nothing found, or clear if slot was empty
+                    }
+                })
+                .catch(err => console.error("Randomizer fetch error for " + cat, err));
+        });
+
+        Promise.all(fetches).finally(() => {
+            btn.html(originalText).prop('disabled', false);
         });
     });
 
@@ -322,9 +343,13 @@ $(document).ready(function() {
                 let newItem = document.createElement('div');
                 newItem.className = `scroll-item filter-item ${item.category} status-${item.status} season-${item.season} occasion-${item.occasion} color-${item.color}`;
                 newItem.setAttribute('data-name', item.name);
+                let lastWornText = item.last_worn ? item.last_worn : 'Never';
                 newItem.innerHTML = `
                     <div class="item-card clickable-item" style="position: relative;" data-category="${item.category}" data-img="${item.image}" data-id="${item.id}">
-                        ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>' : ''}
+                        ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute bottom-0 start-0 m-2">In Laundry</span>' : ''}
+                        <div class="position-absolute top-0 start-0 m-2 bg-dark text-white rounded px-2 py-1" style="font-size: 10px; z-index: 5; opacity: 0.8; pointer-events: none;" title="Times Worn / Last Worn">
+                            <i class="bi bi-arrow-repeat"></i> ${item.wear_count || 0} | <i class="bi bi-calendar-check"></i> ${lastWornText}
+                        </div>
                         <button class="btn-delete-cloth" onclick="event.stopPropagation(); deleteClothItem(${item.id}, this, '${item.category}');" title="Delete item"
                             style="position: absolute; top: 6px; right: 6px; z-index: 10; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(255,77,77,0.9); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; line-height: 1; padding: 0;">
                             <i class="bi bi-trash3" style="font-size: 12px;"></i>

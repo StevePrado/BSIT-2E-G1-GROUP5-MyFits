@@ -65,7 +65,7 @@ function openEditClothesModal(id, name, category, season, occasion, color, statu
             if (laundryNode && laundryNode.checked) statuses.push('laundry');
 
             let seasons = [];
-            ['spring', 'summer', 'fall', 'winter'].forEach(s => {
+            ['spring', 'summer', 'fall', 'winter', 'rainy'].forEach(s => {
                 const node = document.getElementById('filter-season-' + s);
                 if (node && node.checked) seasons.push(s);
             });
@@ -77,7 +77,7 @@ function openEditClothesModal(id, name, category, season, occasion, color, statu
             });
 
             let colors = [];
-            ['black', 'white', 'blue', 'gray', 'brown', 'red', 'green', 'khaki', 'yellow'].forEach(c => {
+            ['black', 'white', 'blue', 'gray', 'brown', 'red', 'green', 'khaki', 'yellow', 'violet'].forEach(c => {
                 const node = document.getElementById('filter-color-' + c);
                 if (node && node.checked) colors.push(c);
             });
@@ -402,9 +402,13 @@ function openEditClothesModal(id, name, category, season, occasion, color, statu
             newItem.className = `scroll-item filter-item ${item.category} status-${item.status} season-${item.season} occasion-${item.occasion} color-${item.color}`;
             newItem.setAttribute('data-id', item.id);
             const safeName = item.name.replace(/'/g, "\\'");
+            let lastWornText = item.last_worn ? item.last_worn : 'Never';
             newItem.innerHTML = `
                 <div class="item-card hover-parent" style="position: relative;">
-                    ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2" style="z-index:5;">In Laundry</span>' : ''}
+                    ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute bottom-0 start-0 m-2" style="z-index:5;">In Laundry</span>' : ''}
+                    <div class="position-absolute top-0 start-0 m-2 bg-dark text-white rounded px-2 py-1" style="font-size: 10px; z-index: 5; opacity: 0.8;" title="Times Worn / Last Worn">
+                        <i class="bi bi-arrow-repeat"></i> ${item.wear_count || 0} | <i class="bi bi-calendar-check"></i> ${lastWornText}
+                    </div>
                     <button class="btn-delete-cloth hover-delete" onclick="event.stopPropagation(); deleteClothItem(${item.id}, this);" title="Delete item">
                         <i class="bi bi-trash3" style="font-size: 12px;"></i>
                     </button>
@@ -755,6 +759,16 @@ function openEditClothesModal(id, name, category, season, occasion, color, statu
                 if (data.status === 200) {
                     const userNameEl = document.getElementById('userNameDisplay');
                     if (userNameEl) userNameEl.textContent = data.userName;
+                    
+                    // Show Admin Report link if admin
+                    if (data.role === 'admin') {
+                        const dropdownMenu = document.querySelector('.dropdown-menu');
+                        if (dropdownMenu) {
+                            const adminLink = document.createElement('li');
+                            adminLink.innerHTML = '<a class="dropdown-item" href="admin_report.html"><i class="bi bi-file-earmark-bar-graph me-2"></i>Admin Report</a>';
+                            dropdownMenu.prepend(adminLink);
+                        }
+                    }
                 } else {
                     window.location.href = '../MarketingPage/login.html';
                     return;
@@ -764,6 +778,21 @@ function openEditClothesModal(id, name, category, season, occasion, color, statu
                 console.error('Failed to fetch user session:', err);
                 window.location.href = '../MarketingPage/login.html';
             });
+
+            // Load Wardrobe Stats
+            fetch('../backend/get_stats.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200 && data.stats) {
+                    document.getElementById('wardrobeStatsCard').style.display = 'block';
+                    document.getElementById('wardrobeStatsText').innerHTML = `You have <strong>${data.stats.total_items} items</strong> in your digital twin.`;
+                    document.getElementById('statTops').innerText = data.stats.total_tops || 0;
+                    document.getElementById('statBottoms').innerText = data.stats.total_bottoms || 0;
+                    document.getElementById('statShoes').innerText = data.stats.total_shoes || 0;
+                    if(document.getElementById('statOutfits')) document.getElementById('statOutfits').innerText = data.stats.total_outfits || 0;
+                }
+            })
+            .catch(err => console.error("Error loading stats:", err));
 
             applyFilters();
         });

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFits Report (Admin Dashboard)</title>
+    <!-- Use similar styling to the rest of the application -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #111111;
+            --background: #fafafa;
+            --surface: #ffffff;
+            --border: #eaeaea;
+            --text-secondary: #666666;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--primary);
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-weight: 500;
+            font-size: 24px;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .print-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .print-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: #fdfdfd;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 16px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                border: none;
+                box-shadow: none;
+                padding: 20px;
+            }
+            .print-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>System Inventory Report</h1>
+                <div class="subtitle" id="reportDate"></div>
+            </div>
+            <button class="print-btn" onclick="window.print()">Print to PDF</button>
+        </div>
+
+        <div id="tableContainer">
+            <p style="text-align: center; color: var(--text-secondary);">Loading report data from database view...</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reportDate').textContent = 'Generated on: ' + new Date().toLocaleDateString();
+
+        async function fetchReport() {
+            const tableContainer = document.getElementById('tableContainer');
+            
+            try {
+                const response = await fetch('../backend/get_report.php');
+                const result = await response.json();
+
+                if (result.status === 200 && result.data.length > 0) {
+                    let tableHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>User Name</th>
+                                    <th>Email</th>
+                                    <th>Total Clothes</th>
+                                    <th>Total Outfits</th>
+                                    <th>Total Scheduled</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    result.data.forEach(row => {
+                        tableHTML += `
+                            <tr>
+                                <td>#${row.user_id}</td>
+                                <td>${row.user_name}</td>
+                                <td>${row.email}</td>
+                                <td>${row.total_clothes}</td>
+                                <td>${row.total_outfits}</td>
+                                <td>${row.total_schedules}</td>
+                            </tr>
+                        `;
+                    });
+
+                    tableHTML += `</tbody></table>`;
+                    tableContainer.innerHTML = tableHTML;
+                } else if (result.status === 200) {
+                    tableContainer.innerHTML = `<p style="text-align:center;">No data available right now.</p>`;
+                } else {
+                    tableContainer.innerHTML = `<div class="error-message">${result.message}</div>`;
+                }
+
+            } catch (error) {
+                console.error("Error fetching report:", error);
+                tableContainer.innerHTML = `<div class="error-message">A network error occurred while loading the report.</div>`;
+            }
+        }
+
+        fetchReport();
+    </script>
+</body>
+</html>

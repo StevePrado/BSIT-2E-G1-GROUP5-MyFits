@@ -119,6 +119,16 @@ $(document).ready(function() {
         success: function(response) {
             if (response.status === 200) {
                 $('#userNameDisplay').text(response.userName);
+                
+                // Show Admin Report link if admin
+                if (response.role === 'admin') {
+                    const dropdownMenu = document.querySelector('.dropdown-menu');
+                    if (dropdownMenu) {
+                        const adminLink = document.createElement('li');
+                        adminLink.innerHTML = '<a class="dropdown-item" href="admin_report.html"><i class="bi bi-file-earmark-bar-graph me-2"></i>Admin Report</a>';
+                        dropdownMenu.prepend(adminLink);
+                    }
+                }
             } else {
                 window.location.href = '../MarketingPage/login.html';
             }
@@ -275,27 +285,36 @@ $(document).ready(function() {
         $('#slot-' + category).html(`<div class="placeholder-text">${icons[category]}</div>`);
     };
 
-    // Randomize outfit
+    // Smart Randomizer outfit (Recommendation Engine)
     $("#btn-randomize").click(function() {
-        ['top', 'bottom', 'shoes'].forEach(cat => {
-            let items = $(`.filter-item.${cat}:visible .clickable-item`);
-            if (items.length > 0) {
-                let randomIdx = Math.floor(Math.random() * items.length);
-                let randomItem = $(items[randomIdx]);
-                let imgSrc = randomItem.data('img');
-                let clothId = randomItem.data('id');
-                let isLaundry = randomItem.closest('.filter-item').hasClass('status-laundry');
-                let warningBadge = isLaundry ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
-                
-                let slotId = '#slot-' + cat;
-                $(slotId).html(`
-                    ${warningBadge}
-                    <img src="${imgSrc}" class="equipped-img" data-img="${imgSrc}" data-id="${clothId}">
-                    <button class="remove-item-btn" onclick="removeEquipped('${cat}', event)">&times;</button>
-                `);
-            } else {
-                window.removeEquipped(cat);
-            }
+        let btn = $(this);
+        let originalText = btn.html();
+        btn.html('<i class="bi bi-hourglass-split"></i> Picking...').prop('disabled', true);
+        
+        let fetches = ['top', 'bottom', 'shoes'].map(cat => {
+            return fetch('../backend/smart_randomizer.php?category=' + cat)
+                .then(res => {
+                    if (!res.ok) throw new Error('Network error');
+                    return res.json();
+                })
+                .then(data => {
+                    let slotId = '#slot-' + cat;
+                    if (data.status === 200 && data.item) {
+                        let clothId = data.item.id;
+                        let imgSrc = data.item.image;
+                        let warningBadge = data.item.status === 'laundry' ? `<div style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" title="Item is in laundry">⚠️</div>` : '';
+                        $(slotId).html(`
+                            ${warningBadge}
+                            <img src="${imgSrc}" class="equipped-img" data-img="${imgSrc}" data-id="${clothId}">
+                            <button class="remove-item-btn" onclick="removeEquipped('${cat}', event)">&times;</button>
+                        `);
+                    }
+                })
+                .catch(err => console.error("Randomizer fetch error for " + cat, err));
+        });
+
+        Promise.all(fetches).finally(() => {
+            btn.html(originalText).prop('disabled', false);
         });
     });
 
@@ -312,9 +331,13 @@ $(document).ready(function() {
                 let newItem = document.createElement('div');
                 newItem.className = `scroll-item filter-item ${item.category} status-${item.status} season-${item.season} occasion-${item.occasion} color-${item.color}`;
                 newItem.setAttribute('data-name', item.name);
+                let lastWornText = item.last_worn ? item.last_worn : 'Never';
                 newItem.innerHTML = `
-                    <div class="item-card clickable-item pb-2 shadow-sm" data-category="${item.category}" data-img="${item.image}" data-id="${item.id}">
-                        ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute top-0 start-0 m-2">In Laundry</span>' : ''}
+                    <div class="item-card clickable-item pb-2 shadow-sm" style="position: relative;" data-category="${item.category}" data-img="${item.image}" data-id="${item.id}">
+                        ${item.status === 'laundry' ? '<span class="badge bg-danger position-absolute bottom-0 start-0 m-2">In Laundry</span>' : ''}
+                        <div class="position-absolute top-0 start-0 m-2 bg-dark text-white rounded px-2 py-1" style="font-size: 10px; z-index: 5; opacity: 0.8; pointer-events: none;" title="Times Worn / Last Worn">
+                            <i class="bi bi-arrow-repeat"></i> ${item.wear_count || 0} | <i class="bi bi-calendar-check"></i> ${lastWornText}
+                        </div>
                         <img src="${item.image}" class="item-img" style="${item.status === 'laundry' ? 'opacity: 0.5;' : ''} object-fit: contain;">
                         <div class="item-title ${item.status === 'laundry' ? 'text-muted' : ''}">${item.name}</div>
                     </div>

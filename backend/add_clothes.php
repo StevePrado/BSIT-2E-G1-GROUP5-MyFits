@@ -51,6 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
         $dbPath = '../uploads/' . $filename;
         
+        /* --- PRESENTATION SCRIPT: CRUD (CREATE) ---
+         * WHAT IT IS: This is the 'C' in CRUD. We are Inserting a new clothing item.
+         * WHY IT IS LIKE THAT: Instead of putting raw variables directly into the SQL string (which is dangerous), 
+         * we use `prepare()` with question marks (?). This is called a Prepared Statement.
+         * WHY IN PHP: If we did this on the front-end in JavaScript, hackers could see our database structure 
+         * and manipulate variables. PHP runs securely on the back-end (server-side), allowing us to safely 
+         * `bind_param()` the data without exposing our database to SQL Injection attacks. It is mathematically safer.
+         */
         $stmt = $conn->prepare("INSERT INTO clothes (user_id, name, category, image, season, occasion, color) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("issssss", $user_id, $name, $category, $dbPath, $season, $occasion, $color);
         

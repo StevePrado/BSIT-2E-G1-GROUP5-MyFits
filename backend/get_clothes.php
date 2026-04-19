@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 
 $user_id = $_SESSION['user_id'];
 
-$sql = "SELECT id, name, category, image, season, occasion, color, status FROM clothes WHERE user_id = ?";
+$sql = "SELECT id, name, category, image, season, occasion, color, status, wear_count, last_worn FROM clothes WHERE user_id = ?";
 $params = [$user_id];    // Array of values to bind to the '?' placeholders
 $types = "i";            // 'i' = integer (user_id is an integer)
 

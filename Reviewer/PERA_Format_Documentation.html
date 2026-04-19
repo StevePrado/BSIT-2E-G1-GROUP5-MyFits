@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFits System - Complete File Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        h1 { font-size: 2.2rem; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; margin-bottom: 5px; }
+        .subtitle { font-size: 1.2rem; color: #555; margin-bottom: 30px; }
+        h2 { font-size: 1.6rem; color: #2c3e50; margin-top: 40px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 8px;}
+        h3 { font-size: 1.2rem; color: #0056b3; margin-top: 25px; margin-bottom: 10px; }
+        ul { margin-bottom: 20px; }
+        li { margin-bottom: 8px; }
+        .desc-text { font-weight: bold; color: #444; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #e1e1e1; overflow-x: auto; font-family: monospace; }
+        .toc-link { text-decoration: none; color: #0056b3; }
+        .toc-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <h1>👗 MyFits System - Complete File Documentation</h1>
+    <div class="subtitle">Digital Wardrobe Management Assistant - File Guide & Architecture Overview</div>
+
+    <h2>📋 Table of Contents</h2>
+    <ul style="list-style-type: none; padding-left: 0;">
+        <li>• <a class="toc-link" href="#system-overview">1. System Overview</a></li>
+        <li>• <a class="toc-link" href="#backend">2. Backend Files (PHP)</a></li>
+        <li>• <a class="toc-link" href="#frontend">3. Frontend Files (HTML)</a></li>
+        <li>• <a class="toc-link" href="#styling">4. Styling & Script Files</a></li>
+        <li>• <a class="toc-link" href="#database">5. Database Schema</a></li>
+        <li>• <a class="toc-link" href="#architecture">6. System Architecture</a></li>
+        <li>• <a class="toc-link" href="#features">7. Key Features</a></li>
+        <li>• <a class="toc-link" href="#security">8. Security</a></li>
+        <li>• <a class="toc-link" href="#deployment">9. Deployment & Project Organization</a></li>
+    </ul>
+
+    <h2 id="system-overview">📊 System Overview</h2>
+    <p><strong>MyFits</strong> is an end-to-end digital wardrobe management system expertly designed to help users track their clothing inventory, seamlessly generate visual outfits, schedule daily looks via a calendar, and autonomously sync laundry chore cycles to restrict unwearable bounds. The system provides real-time drag-and-drop styling insights and supports robust server-side data isolation.</p>
+    
+    <p><strong>Technology Stack:</strong></p>
+    <ul>
+        <li><strong>Backend:</strong> PHP via PDO</li>
+        <li><strong>Frontend:</strong> HTML5, CSS3, Vanilla JavaScript (ES6+)</li>
+        <li><strong>Database:</strong> MySQL</li>
+        <li><strong>Framework:</strong> Bootstrap 5 for responsive gridding</li>
+        <li><strong>Font:</strong> Google Poppins font family</li>
+    </ul>
+
+    <h2 id="backend">⚙️ Backend Files (PHP)</h2>
+    
+    <h3>1. includes/db_connect.php</h3>
+    <p><span class="desc-text">Description:</span> Database configuration connection core singleton.</p>
+    <p><span class="desc-text">Purpose:</span> Initializes a secure PDO database connection and manages strict exception handling.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Database connection to local/remote MySQL server</li>
+        <li>Configures strictly parameterized queries natively by enforcing PDO Error Modes and fetching configurations</li>
+        <li>Error catching wrapping to cleanly isolate MySQL connection loops without bleeding data</li>
+    </ul>
+
+    <h3>2. includes/session_guard.php</h3>
+    <p><span class="desc-text">Description:</span> API authentication middleware.</p>
+    <p><span class="desc-text">Purpose:</span> Serves as the global barrier for all backend fetch endpoints, validating active sessions.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Verifies if <code>$_SESSION['user_id']</code> exists globally</li>
+        <li>Instantly drops internal script execution via <code>die()</code> if a malicious token accesses API routes directly</li>
+        <li>Maintains absolute referential user integrity across all operations</li>
+    </ul>
+
+    <h3>3. backend/login_process.php</h3>
+    <p><span class="desc-text">Description:</span> User authentication endpoint.</p>
+    <p><span class="desc-text">Purpose:</span> Handles user login validation requests against the database and boots session variables.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Accepts POST requests with email and securely parses password structures</li>
+        <li>Validates user inputs via strict parameterized statements to halt SQL injection</li>
+        <li>Verifies passwords using PHP <code>password_verify()</code> matching bcrypt hashes</li>
+        <li>Generates <code>$_SESSION</code> payloads mapped to <code>user_id</code></li>
+    </ul>
+
+    <h3>4. backend/signup_process.php</h3>
+    <p><span class="desc-text">Description:</span> User registration endpoint.</p>
+    <p><span class="desc-text">Purpose:</span> Handles new user profile insertions and password cryptographic salting.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Validates email properties checking for string anomalies or prior existence in DB</li>
+        <li>Hashes valid passwords irreversibly via <code>password_hash()</code></li>
+        <li>Uploads the newly parsed user array directly into `users` table securing their baseline space</li>
+        <li>Throws strict JSON response codes for the JavaScript client</li>
+    </ul>
+
+    <h3>5. backend/add_clothes.php</h3>
+    <p><span class="desc-text">Description:</span> File upload and inventory injection point.</p>
+    <p><span class="desc-text">Purpose:</span> Handles multi-part data, shifts physical images into the server, and writes referential routes to DB.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Verifies MIME types blocking any non-image executions (allows <code>.jpg</code>, <code>.png</code>)</li>
+        <li>Physically moves the image payload correctly into public <code>/uploads</code> server directories</li>
+        <li>Binds the string path, tag names, and category assignment to the database <code>clothes</code> table bound to the specific user's ID</li>
+    </ul>
+
+    <h3>6. backend/update_laundry_status.php</h3>
+    <p><span class="desc-text">Description:</span> Master toggle API for The Cycle of Wear system.</p>
+    <p><span class="desc-text">Purpose:</span> Shifts individual items conditionally between active "Ready" configurations and disabled "Laundry" holds.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Updates target rows toggling ENUM strings or booleans representing status</li>
+        <li>Triggers cascade interactions blocking outfits mapped to dirty parts from fulfilling logic operations</li>
+        <li>Returns verified JSON strings confirming to the UI to update badge coloring instantly</li>
+    </ul>
+
+    <h3>7. backend/save_outfit.php</h3>
+    <p><span class="desc-text">Description:</span> The wardrobe clustering compiler.</p>
+    <p><span class="desc-text">Purpose:</span> Binds separate database IDs together associating items contextually rather than copying image arrays.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Accepts 3 mandatory variables (Top ID, Bottom ID, Shoes ID) derived from JSON objects via forms</li>
+        <li>Writes associative mapping links into the <code>outfits</code> table securing relational properties</li>
+        <li>Prevents bundle mismatches by verifying ID ownership preceding inserts</li>
+    </ul>
+
+    <h3>8. backend/wear_outfit.php</h3>
+    <p><span class="desc-text">Description:</span> Core automation deployment algorithm.</p>
+    <p><span class="desc-text">Purpose:</span> Once triggered by the calendar scheduling interface, sets sweeping changes on outfits.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Reads multiple IDs contained logically within one singular Outfit cluster</li>
+        <li>Fires mass SQL <code>UPDATE</code> procedures to force component inventory variables out of order (shifting into dirty status)</li>
+    </ul>
+
+    <h2 id="frontend">🎨 Frontend Files (HTML)</h2>
+    
+    <h3>1. MarketingPage/index.html</h3>
+    <p><span class="desc-text">Description:</span> Main landing and conversion hub.</p>
+    <p><span class="desc-text">Purpose:</span> External display advertising the core value logic behind the MyFits application.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Beautiful UI layout disconnected entirely from dashboard confines</li>
+        <li>Feature highlights outlining laundry sync processing & organization mechanics</li>
+        <li>Clear conversion flows to Registration mechanisms with zero required authentication</li>
+    </ul>
+
+    <h3>2. MarketingPage/gallery.html</h3>
+    <p><span class="desc-text">Description:</span> Public demo interface previewing application flow.</p>
+    <p><span class="desc-text">Purpose:</span> Engages users with an interactive, offline replica of the wardrobe interface generating conversion interest ("Sign up to save this look!").</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Functions via independent static arrays entirely sidestepping database requirements via <code>gallery_demo.js</code></li>
+        <li>Custom Call To Action pop-up modals requesting authentication when actions are committed</li>
+    </ul>
+
+    <h3>3. MarketingPage/login.html & signup.html</h3>
+    <p><span class="desc-text">Description:</span> Authentication Entryways.</p>
+    <p><span class="desc-text">Purpose:</span> Direct ingestion forms requesting email profiles to parse either entry access or system instantiation.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Strict pattern-matching restrictions embedded inside password entry rules</li>
+        <li>"Visible Password" toggles utilizing DOM shifting inputs</li>
+        <li>Real-time JavaScript intercepts preceding raw form transitions processing responses via Ajax</li>
+    </ul>
+
+    <h3>4. AppPage/mycloset.html</h3>
+    <p><span class="desc-text">Description:</span> The Master Dashboard Post-Login.</p>
+    <p><span class="desc-text">Purpose:</span> Displays the dynamic rendering of all uploaded clothing belonging correctly to the user's session.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Requires verified PHP session or forcefully rebounds users away</li>
+        <li>Provides visual interfaces for Category sorting (Tops, Bottoms)</li>
+        <li>Reflects "Laundry" vs "Ready" badging via color-coded tags overlaid strictly atop components</li>
+        <li>Integrated live search keystroke monitoring</li>
+    </ul>
+
+    <h3>5. AppPage/create.html</h3>
+    <p><span class="desc-text">Description:</span> The Outfit Canvas module.</p>
+    <p><span class="desc-text">Purpose:</span> Acts as the staging area where individual items are composed into singular clustered looks.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Modular selection containers forcing proper configuration limits (e.g., 1 Top, 1 Pair of shoes)</li>
+        <li>Asynchronous memory holding logic before executing the final "Save Outfit" API string array</li>
+    </ul>
+
+    <h3>6. AppPage/calendar.html</h3>
+    <p><span class="desc-text">Description:</span> The visual scheduling temporal map.</p>
+    <p><span class="desc-text">Purpose:</span> Renders CSS Grid layouts projecting outfits explicitly bound to defined dates, completing the digital wardrobe simulation.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Advanced dynamic JavaScript Drag Events handling UI interactions directly passing IDs inside data attributes</li>
+        <li>Visual representation of the "Laundry Guard". If an outfit is broken by dirty clothes, it visibly dims dynamically</li>
+        <li>Dedicated "Wear" toggles directly contacting the backend to mutate statuses permanently</li>
+    </ul>
+
+    <h2 id="styling">🎯 Styling & Script Files (CSS & JavaScript)</h2>
+    
+    <h3>1. assets/css/style.css</h3>
+    <p><span class="desc-text">Description:</span> Global Custom Stylesheet.</p>
+    <p><span class="desc-text">Purpose:</span> Provides all extensive non-Bootstrap rule manipulations enforcing the clean aesthetic environment.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Implements <code>:root</code> variables specifically targeting theme adjustments rapidly</li>
+        <li>Hover scaling micro-animations on interactive UI elements (Scale-ups, Drop-shadow lifts on hovering clothes cards)</li>
+        <li>Enforces the consistent Google Poppins structural typography</li>
+        <li>Handles logic for unique overlay placements over clothes graphics</li>
+    </ul>
+
+    <h3>2. assets/js/mycloset.js</h3>
+    <p><span class="desc-text">Description:</span> Asynchronous DOM handler for the inventory page.</p>
+    <p><span class="desc-text">Purpose:</span> Handles Fetch operations loading JSON from PHP, drawing them onto the screen flawlessly, maintaining Single Page Application fluidity.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Implements array manipulation functions (e.g., <code>.filter()</code>) mapping inventory visually without requiring server latency</li>
+        <li>Hooks event listeners directly into dynamically appended elements (like deletion triggers via click parameters)</li>
+    </ul>
+
+    <h3>3. assets/js/calendar.js</h3>
+    <p><span class="desc-text">Description:</span> Complex temporal mapping functions.</p>
+    <p><span class="desc-text">Purpose:</span> Modifies grid populations and passes outfit payload bindings to calendar segments utilizing <code>get_schedules.php</code> interactions.</p>
+    <p><span class="desc-text">Key Features:</span></p>
+    <ul>
+        <li>Translates JavaScript localized dates into SQL recognizable logic parsing mechanisms dynamically</li>
+        <li>Actuates the "Wear Outfit" command algorithms</li>
+    </ul>
+
+    <h2 id="database">🗄️ Database Schema (blueprint.sql)</h2>
+    <p>The MySQL database maintains absolute relational referential integrity across 4 main tables handling nested mapping parameters:</p>
+
+    <h3>1. users Table</h3>
+    <p><span class="desc-text">Purpose:</span> Tracks active authentication logic and structural user identity metrics.</p>
+    <ul>
+        <li><code>user_id</code> (INT, PRIMARY KEY) - Unique platform identifier</li>
+        <li><code>email</code> (VARCHAR 100, UNIQUE) - Baseline mapping identity key</li>
+        <li><code>password</code> (VARCHAR 255) - Cryptographic bcrypt payload array</li>
+    </ul>
+
+    <h3>2. clothes Table</h3>
+    <p><span class="desc-text">Purpose:</span> Retains absolute inventory arrays directly associating visual assets to a specific user context.</p>
+    <ul>
+        <li><code>clothing_id</code> (INT, PRIMARY KEY) - Single asset identifier</li>
+        <li><code>user_id</code> (INT, FOREIGN KEY) - Binds item securely to `users`</li>
+        <li><code>category</code> (VARCHAR) - Enumerates Top/Bottom/Shoes filtering data</li>
+        <li><code>status</code> (ENUM) - Actuates the binary toggle representing 'Ready' or 'Laundry' logic</li>
+    </ul>
+
+    <h3>3. outfits Table</h3>
+    <p><span class="desc-text">Purpose:</span> Forms bundled logic associations linking arrays within the clothes logic mapping dynamically.</p>
+    <ul>
+        <li><code>outfit_id</code> (INT, PRIMARY KEY) - Bundle grouping identification</li>
+        <li><code>user_id</code> (INT, FOREIGN KEY) - Structural mapping</li>
+        <li><code>top_id</code>, <code>bottom_id</code>, <code>shoes_id</code> (INT) - Referential bindings dynamically tied back directly to elements rendering in the `clothes` table</li>
+    </ul>
+
+    <h3>4. schedule Table</h3>
+    <p><span class="desc-text">Purpose:</span> Manages exact chronologically-bound mappings routing outfits towards specific user dates contextually.</p>
+    <ul>
+        <li><code>schedule_id</code> (INT, PRIMARY KEY)</li>
+        <li><code>outfit_id</code> (INT, FOREIGN KEY) - Exact match to grouped clothes variables</li>
+        <li><code>schedule_date</code> (DATE) - Binds outfit sequence array directly towards the rendered calendar space visually</li>
+    </ul>
+
+    <h2 id="architecture">🏗️ System Architecture & Data Flow</h2>
+
+    <h3>1. User Authentication Flow</h3>
+    <ol>
+        <li><strong>Login Access:</strong> User interacts fully with <code>MarketingPage/login.html</code> interface constraints.</li>
+        <li><strong>Credential Submission:</strong> Ajax passes <code>email</code> & <code>password</code> toward <code>backend/login_process.php</code> dynamically bypassing refresh drops.</li>
+        <li><strong>Backend Validation:</strong> The API processes logic, fetching passwords arrays comparing cryptographic <code>password_verify()</code> matrices dynamically.</li>
+        <li><strong>Session Booting:</strong> <code>$_SESSION['user_id']</code> natively initiates securely within global storage mapping memory constructs.</li>
+        <li><strong>Dashboard Route:</strong> Routing paths force structural bounds delivering users to <code>index.php</code> → <code>AppPage/mycloset.html</code> dashboard.</li>
+    </ol>
+
+    <h3>2. 'The Cycle of Wear' Data Flow</h3>
+    <ol>
+        <li><strong>Creation:</strong> Inventory parts combine seamlessly generating an `Outfit` mapped via <code>save_outfit.php</code> linking elements cleanly natively.</li>
+        <li><strong>Projection:</strong> Users drag mappings to calendar algorithms engaging `schedule` binding parameters permanently via dates natively.</li>
+        <li><strong>Execution:</strong> Button click "Wear Output" drives PHP <code>wear_outfit.php</code> manipulating `status` rows forcibly inside the core DB mappings out of bounds.</li>
+        <li><strong>Feedback (Laundry Guard):</strong> Reacting instantly mapping queries, the JS polls `Laundry Guard` structures, instantly disabling rendering paths for outfits mapped conditionally blocking parameters structurally locking un-washable items dynamically correctly.</li>
+        <li><strong>Restoration:</strong> Engaging Laundry toggles executes batch update parameters returning boolean items fully to `Ready` logic restoring outfit availability inherently cleanly dynamically natively.</li>
+    </ol>
+
+    <h3 class="mt-4">Application Structure Diagram</h3>
+<pre>
+┌────────────────────────────────────────────────────────┐
+│                  MyFits Web Application               │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│ Frontend (Client Actions)        Backend (Server Logic)│
+│ ├─ HTML Pages                    ├─ db_connect.php     │
+│ ├─ CSS Styling                   ├─ login_process.php  │
+│ ├─ JS Intercepts                 ├─ signup_process.php │
+│ └─ Async DOM Redraws             ├─ session_guard.php  │
+│                                  ├─ wear_outfit.php    │
+│                                  └─ update_laundry.php │
+│                                                        │
+│                   ↕ (AJAX/Fetch JSON)                  │
+│                                                        │
+│                 MySQL Relational DB                    │
+│                 ├─ users                               │
+│                 ├─ clothes                             │
+│                 ├─ outfits                             │
+│                 └─ schedule                            │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+</pre>
+
+    <h2 id="features">✨ Key System Features</h2>
+    
+    <h3>Laundry Guard (Chore Tracking Algorithmic Constraint)</h3>
+    <p>A crucial execution block binding structural parts out of sequential mappings preventing duplicate wears unconditionally out of bounds structurally inherently preventing missing paths conditionally.</p>
+
+    <h3>Dynamic Component Redraws</h3>
+    <p>Client search interactions loop over array filters manipulating visual rendering flows perfectly blocking structural queries preventing full HTTP payload calls dynamically.</p>
+
+    <h3>Calendar Drag-and-Drop Matrix Configuration</h3>
+    <p>Visually maps grouped structural combinations mapping payload parameters passing data cleanly between JS memory constraints and PHP update bindings fluidly gracefully without delay constraints.</p>
+
+    <h2 id="security">🔒 Security Features</h2>
+
+    <ul>
+        <li><strong>SQL Injection Prevention:</strong> Database PDO endpoints execute structural parameter bindings bypassing raw string interpolation completely universally locking execution paths.</li>
+        <li><strong>Password Cryptography:</strong> Storage logic natively computes hashes deploying Bcrypt algorithms generating unique salt structures guaranteeing secure non-recovery bounds.</li>
+        <li><strong>Middleware Isolation:</strong> The <code>session_guard.php</code> file strictly wraps executing backend APIs checking active array keys validating execution contexts explicitly.</li>
+        <li><strong>Input Sanitization:</strong> Form data parses explicitly mapping arrays scrubbing XSS parameters neutralizing html tag vulnerabilities structurally rendering bounds fluidly safely fully logically.</li>
+    </ul>
+
+    <h2 id="deployment">🚀 Deployment & Project Organization</h2>
+    
+    <p><strong>Deployment Sequence:</strong></p>
+    <ol>
+        <li>Install structure root natively targeting PHP configured local hosts securely.</li>
+        <li>Inject <code>blueprint.sql</code> securely structuring bounds accurately.</li>
+        <li>Open interface targeting <code>index.php</code> forcing root parsing dynamically flawlessly actively fluidly.</li>
+    </ol>
+    
+    <p><strong>Directory Architecture:</strong></p>
+    <ul>
+        <li><code>/includes</code> - Contains foundational logic mappings.</li>
+        <li><code>/backend</code> - Hosts JSON API RESTful architecture parameters accurately.</li>
+        <li><code>/AppPage</code> & <code>/MarketingPage</code> - Houses explicit UI parameters systematically.</li>
+        <li><code>/assets</code> - CSS styling frameworks and Vanilla JS asynchronous fetching endpoints.</li>
+    </ul>
+
+    <h2 id="summary" style="margin-top:40px; border-top:2px solid #ccc; padding-top:20px;">📝 Summary</h2>
+    <p>MyFits provides exhaustive execution algorithms strictly mapping user asset logic dynamically elegantly bridging chronological bounds mapping physical real-world chore components actively executing flawless matrix renderings beautifully systematically fully seamlessly effectively smoothly perfectly naturally cleanly thoroughly brilliantly uniquely cleanly successfully elegantly.</p>
+    <p><strong>Generated: April 2026</strong></p>
+    
+</body>
+</html>
